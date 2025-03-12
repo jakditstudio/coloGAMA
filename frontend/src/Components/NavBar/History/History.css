@@ -1,0 +1,90 @@
+/* History.css */
+
+.history {
+    width: 100%;
+    min-height: 60vh; /* Adjust as needed */
+    background: linear-gradient(rgba(8, 0, 58, 0.7), rgba(8, 0, 58, 0.7)), url('../../assets/history_bg.jpg'); /* Replace with a suitable background image */
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column; /* Changed from align-items and justify-content */
+    align-items: center;
+    padding: 20px; /* Add padding */
+    box-sizing: border-box; /* Include padding in width/height */
+}
+
+.history h2 {
+    font-size: 100px; /* Reduced size */
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.history ul {
+    list-style: none;
+    padding: 0;
+    width: 80%; /* Limit width of the list */
+    max-width: 600px; /* Maximum width */
+}
+
+.history li {
+    margin-bottom: 10px;
+    text-align: center; /* Center the links */
+}
+
+.history a {
+    color: #ffffff; /* White link color */
+    text-decoration: none;
+    display: block; /* Make the entire list item clickable */
+    padding: 10px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Add a subtle border */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.history a:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Slight background on hover */
+}
+
+.history .error {
+    color: #ffcccc;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.option-button {
+    margin: 5px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    cursor: pointer;
+}
+
+.option-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+/* --- Responsive --- */
+@media (max-width: 850px) {
+    .history h2 {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 600px) {
+    .history {
+        min-height: 70vh; /* Adjust for smaller screens */
+    }
+
+    .history h2 {
+        font-size: 24px;
+    }
+
+    .history ul {
+        width: 90%; /* Take up more width on smaller screens */
+    }
+}
