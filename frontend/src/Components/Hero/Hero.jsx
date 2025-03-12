@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './Hero.css';
 import arrow from '../../assets/arrow.png';
-import { Link } from 'react-router-dom'; // Import Link
+// import { Link } from 'react-router-dom'; // Import Link
 
 const Hero = () => {
   const [loading, setLoading] = useState(false);

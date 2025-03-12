@@ -2,11 +2,11 @@
 
 .history {
     width: 100%;
-    min-height: 60vh; /* Adjust as needed */
-    background: linear-gradient(rgba(8, 0, 58, 0.7), rgba(8, 0, 58, 0.7)), url('../../assets/history_bg.jpg'); /* Replace with a suitable background image */
+    min-height: 90vh; /* Adjust as needed */
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgb(0, 0, 0)), url('../../../assets/main1.jpg');/* Replace with a suitable background image */
     background-size: cover;
     background-position: center;
-    color: #ffffff;
+    color: #ffffff; 
     display: flex;
     flex-direction: column; /* Changed from align-items and justify-content */
     align-items: center;
@@ -15,10 +15,11 @@
 }
 
 .history h2 {
-    font-size: 100px; /* Reduced size */
+    font-size: 50px; /* Reduced size */
     font-weight: 600;
     text-align: center;
     margin-bottom: 20px;
+    margin-top: 150px;
 }
 
 .history ul {
@@ -52,20 +53,35 @@
     font-weight: bold;
     text-align: center;
     margin-top: 100px;
+    margin-bottom: 0;
+    font-size: 40px;
 }
 
 .option-button {
-    margin: 5px;
-    padding: 10px 15px;
+    margin: 15px;
     border: none;
     border-radius: 5px;
-    background-color: #4CAF50; /* Green background */
-    color: white; /* White text */
+    background-color: #ffffff; /* Green background */
+    color: black; /* White text */
     cursor: pointer;
+    margin-top: 25px;
+    
+
+    padding: 15px 35px;
+    font-size: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 0;
+    outline: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease-in-out;
 }
 
 .option-button:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: rgb(223, 223, 223); /* Darker green on hover */
+        transform: scale(1.07);
 }
 
 /* --- Responsive --- */
@@ -86,5 +102,15 @@
 
     .history ul {
         width: 90%; /* Take up more width on smaller screens */
+    }
+    .history .error{
+        font-size: 30px;
+        margin-bottom: 100px;
+    }
+    .option-button{
+        font-size: 14px;
+        margin: 5px;
+        padding: 10px 15px;
+        border-radius: 5px;
     }
 }
