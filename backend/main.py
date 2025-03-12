@@ -37,7 +37,7 @@ def run_colometry():
     try:
         # Run the colometry script
         result = subprocess.run(
-            ["python3", "coloTEST.py"], capture_output=True, text=True
+            ["python3", "colometry.py"], capture_output=True, text=True
         )
 
         if result.returncode != 0:
