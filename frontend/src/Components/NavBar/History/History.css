@@ -1,116 +1,139 @@
 /* History.css */
 
 .history {
-    width: 100%;
-    min-height: 90vh; /* Adjust as needed */
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgb(0, 0, 0)), url('../../../assets/main1.jpg');/* Replace with a suitable background image */
-    background-size: cover;
-    background-position: center;
-    color: #ffffff; 
-    display: flex;
-    flex-direction: column; /* Changed from align-items and justify-content */
-    align-items: center;
-    padding: 20px; /* Add padding */
-    box-sizing: border-box; /* Include padding in width/height */
+  width: 100%;
+  min-height: 90vh; /* Adjust as needed */
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgb(0, 0, 0)),
+    url("../../../assets/main1.jpg"); /* Replace with a suitable background image */
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column; /* Changed from align-items and justify-content */
+  align-items: center;
+  padding: 20px; /* Add padding */
+  box-sizing: border-box; /* Include padding in width/height */
 }
 
 .history h2 {
-    font-size: 50px; /* Reduced size */
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 150px;
+  font-size: 50px; /* Reduced size */
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 150px;
 }
 
 .history ul {
-    list-style: none;
-    padding: 0;
-    width: 80%; /* Limit width of the list */
-    max-width: 600px; /* Maximum width */
+  list-style: none;
+  padding: 0;
+  width: 80%; /* Limit width of the list */
+  max-width: 600px; /* Maximum width */
 }
 
 .history li {
-    margin-bottom: 10px;
-    text-align: center; /* Center the links */
+  margin-bottom: 10px;
+  text-align: center; /* Center the links */
 }
 
 .history a {
-    color: #ffffff; /* White link color */
-    text-decoration: none;
-    display: block; /* Make the entire list item clickable */
-    padding: 10px 15px;
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Add a subtle border */
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+  color: #ffffff; /* White link color */
+  text-decoration: none;
+  display: block; /* Make the entire list item clickable */
+  padding: 10px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Add a subtle border */
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .history a:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Slight background on hover */
+  background-color: rgba(255, 255, 255, 0.1); /* Slight background on hover */
 }
 
 .history .error {
-    color: #ffcccc;
-    font-weight: bold;
-    text-align: center;
-    margin-top: 100px;
-    margin-bottom: 0;
-    font-size: 40px;
+  color: #ff6969;
+  font-weight: bold;
+  text-align: center;
+  font-size: 40px;
 }
 
 .option-button {
-    margin: 15px;
-    border: none;
-    border-radius: 5px;
-    background-color: #ffffff; /* Green background */
-    color: black; /* White text */
-    cursor: pointer;
-    margin-top: 25px;
-    
+  margin: 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ffffff; /* Green background */
+  color: black; /* White text */
+  cursor: pointer;
+  margin-top: 25px;
 
-    padding: 15px 35px;
-    font-size: 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    border: 0;
-    outline: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease-in-out;
+  padding: 15px 35px;
+  font-size: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 0;
+  outline: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out;
 }
 
 .option-button:hover {
-    background-color: rgb(223, 223, 223); /* Darker green on hover */
-        transform: scale(1.07);
+  background-color: rgb(223, 223, 223); /* Darker green on hover */
+  transform: scale(1.07);
+}
+
+.file-container {
+  width: 90%;
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f4f4f4;
+  margin-top: 20px;
+  border-radius: 10px;
+  margin-bottom: 100px;
+}
+
+.pdf-viewer {
+  width: 90%;
+  height: 100%;
+  border: none;
+}
+
+.image-viewer,
+.histogram-viewer {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
 }
 
 /* --- Responsive --- */
 @media (max-width: 850px) {
-    .history h2 {
-        font-size: 32px;
-    }
+  .history h2 {
+    font-size: 32px;
+  }
 }
 
 @media (max-width: 600px) {
-    .history {
-        min-height: 70vh; /* Adjust for smaller screens */
-    }
+  .history {
+    min-height: 70vh; /* Adjust for smaller screens */
+  }
 
-    .history h2 {
-        font-size: 24px;
-    }
+  .history h2 {
+    font-size: 24px;
+  }
 
-    .history ul {
-        width: 90%; /* Take up more width on smaller screens */
-    }
-    .history .error{
-        font-size: 30px;
-        margin-bottom: 100px;
-    }
-    .option-button{
-        font-size: 14px;
-        margin: 5px;
-        padding: 10px 15px;
-        border-radius: 5px;
-    }
+  .history ul {
+    width: 90%; /* Take up more width on smaller screens */
+  }
+  .history .error {
+    font-size: 30px;
+    margin-bottom: 100px;
+  }
+  .option-button {
+    font-size: 14px;
+    margin: 5px;
+    padding: 10px 15px;
+    border-radius: 5px;
+  }
 }
