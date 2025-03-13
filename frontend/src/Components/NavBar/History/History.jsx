@@ -60,7 +60,7 @@ const History = () => {
         </button>
       </div>
 
-      <div className="file-container">
+      <div className={`file-container ${selectedType}`}>
         {error ? (
           <p className="error">{error}</p>
         ) : (

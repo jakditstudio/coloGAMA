@@ -3,20 +3,20 @@
 .history {
   width: 100%;
   min-height: 90vh; /* Adjust as needed */
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgb(0, 0, 0)),
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgb(0, 0, 0)),
     url("../../../assets/main1.jpg"); /* Replace with a suitable background image */
   background-size: cover;
   background-position: center;
   color: #ffffff;
   display: flex;
-  flex-direction: column; /* Changed from align-items and justify-content */
+  flex-direction: column;
   align-items: center;
-  padding: 20px; /* Add padding */
-  box-sizing: border-box; /* Include padding in width/height */
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .history h2 {
-  font-size: 50px; /* Reduced size */
+  font-size: 50px;
   font-weight: 600;
   text-align: center;
   margin-bottom: 20px;
@@ -26,27 +26,29 @@
 .history ul {
   list-style: none;
   padding: 0;
-  width: 80%; /* Limit width of the list */
-  max-width: 600px; /* Maximum width */
+  width: 80%;
+  max-width: 600px;
+  margin-top: 20px;
 }
 
 .history li {
-  margin-bottom: 10px;
-  text-align: center; /* Center the links */
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .history a {
-  color: #ffffff; /* White link color */
+  color: #ffffff;
+  font-size: 1.4rem;
   text-decoration: none;
-  display: block; /* Make the entire list item clickable */
+  display: block;
   padding: 10px 15px;
-  border: 1px solid rgba(255, 255, 255, 0.3); /* Add a subtle border */
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
 
 .history a:hover {
-  background-color: rgba(255, 255, 255, 0.1); /* Slight background on hover */
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .history .error {
@@ -60,17 +62,13 @@
   margin: 15px;
   border: none;
   border-radius: 5px;
-  background-color: #ffffff; /* Green background */
-  color: black; /* White text */
+  background-color: #ffffff;
+  color: black;
   cursor: pointer;
   margin-top: 25px;
-
   padding: 15px 35px;
   font-size: 20px;
   border-radius: 10px;
-  cursor: pointer;
-  border: 0;
-  outline: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -78,20 +76,38 @@
 }
 
 .option-button:hover {
-  background-color: rgb(223, 223, 223); /* Darker green on hover */
+  background-color: rgb(223, 223, 223);
   transform: scale(1.07);
 }
 
+/* --- File Container with Dynamic Background --- */
 .file-container {
-  width: 90%;
-  height: 80vh;
+  width: 60%;
+  height: 60vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f4f4f4;
+  border: 2px solid #ffffff;
+  background-color: rgba(0, 0, 0, 0.3);
   margin-top: 20px;
   border-radius: 10px;
   margin-bottom: 100px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Background khusus untuk setiap kategori */
+.file-container.pdfs {
+  background-image: url("/assets/pdf-bg.jpg");
+}
+
+.file-container.images {
+  background-image: url("/assets/image-bg.jpg");
+}
+
+.file-container.histograms {
+  background-image: url("/assets/histogram-bg.jpg");
 }
 
 .pdf-viewer {
@@ -116,7 +132,7 @@
 
 @media (max-width: 600px) {
   .history {
-    min-height: 70vh; /* Adjust for smaller screens */
+    min-height: 70vh;
   }
 
   .history h2 {
@@ -124,12 +140,14 @@
   }
 
   .history ul {
-    width: 90%; /* Take up more width on smaller screens */
+    width: 90%;
   }
+
   .history .error {
     font-size: 30px;
     margin-bottom: 100px;
   }
+
   .option-button {
     font-size: 14px;
     margin: 5px;
