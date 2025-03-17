@@ -73,6 +73,7 @@ def get_latest_file(directory: str, extension: str) -> Optional[str]:
             reverse=True
         )
         return os.path.join(directory, files[0]) if files else None
+        
     except Exception as e:
         return None
 
@@ -115,6 +116,13 @@ def get_history():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+# add serving file    
+@app.get("/files/{file_path:path}")
+def serve_file(file_path: str):
+    file_location = os.path.join(MAIN_OUTPUT_DIR, file_path)
+    return FileResponse(file_location)
 
 @app.get("/history/pdf/{filename}")
 def get_pdf_history(filename: str):
