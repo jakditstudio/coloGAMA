@@ -4,6 +4,7 @@ import "./History.css";
 const History = () => {
   const [files, setFiles] = useState({ pdfs: [], images: [], histograms: [] });
   const [selectedType, setSelectedType] = useState("pdfs");
+  const[selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -25,11 +26,16 @@ const History = () => {
 
   const handleOptionClick = (type) => {
     setSelectedType(type);
+    setSelectedFile(null); // Reset file preview when switching categories
     if (files[type].length === 0) {
       setError(`No ${type} found`);
     } else {
       setError(null);
     }
+  };
+
+  const handleFileClick = (file) => {
+    setSelectedFile(file); // Set the clicked file for preview
   };
 
   return (
@@ -43,17 +49,13 @@ const History = () => {
           PDF
         </button>
         <button
-          className={`option-button ${
-            selectedType === "images" ? "active" : ""
-          }`}
+          className={`option-button ${selectedType === "images" ? "active" : ""}`}
           onClick={() => handleOptionClick("images")}
         >
           Images
         </button>
         <button
-          className={`option-button ${
-            selectedType === "histograms" ? "active" : ""
-          }`}
+          className={`option-button ${selectedType === "histograms" ? "active" : ""}`}
           onClick={() => handleOptionClick("histograms")}
         >
           Histogram
@@ -67,14 +69,33 @@ const History = () => {
           <ul>
             {files[selectedType].map((file, index) => (
               <li key={index}>
-                <a href={file.url} target="_blank" rel="noopener noreferrer">
+                <button className="file-button" onClick={() => handleFileClick(file)}>
                   {file.name}
-                </a>
+                </button>
               </li>
             ))}
           </ul>
         )}
       </div>
+
+      {/* File Preview Section */}
+      {selectedFile && (
+        <div className="preview-container">
+          {selectedType === "pdfs" ? (
+            <iframe
+              src={selectedFile.url}
+              className="pdf-viewer"
+              title="PDF Preview"
+            ></iframe>
+          ) : (
+            <img
+              src={selectedFile.url}
+              alt="Preview"
+              className="image-viewer"
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };
