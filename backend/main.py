@@ -4,6 +4,7 @@ import subprocess
 import os
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
+from colometry import process_colometry
 
 app = FastAPI()
 
@@ -31,34 +32,17 @@ for directory in [MAIN_OUTPUT_DIR, IMAGE_DIR, HISTOGRAM_DIR, PDF_DIR]:
 def read_root():
     return {"message": "Colometry API is running!"}
 
-@app.post("/capture")
+app.post("/capture")
 def run_colometry():
     """Triggers the colometry process and retrieves the latest results."""
     try:
-        # Run the colometry script
-        result = subprocess.run(
-            ["python3", "coloTEST.py"], capture_output=True, text=True
-        )
-
-        if result.returncode != 0:
-            raise HTTPException(status_code=500, detail=f"Colometry script failed: {result.stderr.strip()}")
-
-        # Get latest files
-        latest_pdf = get_latest_file(PDF_DIR, ".pdf")
-        latest_image = get_latest_file(IMAGE_DIR, ".jpg")
-        latest_histogram = get_latest_file(HISTOGRAM_DIR, ".png")
-
-        # Validate file existence
-        if not latest_pdf or not latest_image or not latest_histogram:
-            raise HTTPException(status_code=500, detail="Expected output files not found.")
+        # Run the colometry process directly
+        result = process_colometry()
 
         return {
             "message": "Colometry process completed successfully.",
-            "results": {
-                "pdf_url": f"http://localhost:8000/latest_pdf",
-                "image_url": f"http://localhost:8000/latest_image",
-                "histogram_url": f"http://localhost:8000/latest_histogram"
-            }
+            "pdf_url": f"http://localhost:8000/files/pdf/{os.path.basename(result['pdf_filepath'])}",
+            "captures": result['captures']
         }
 
     except Exception as e:

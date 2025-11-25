@@ -7,7 +7,9 @@ import board
 import neopixel
 from picamera2 import Picamera2, Preview
 from libcamera import controls
-from libcamera import transform
+from libcamera import Transform
+import matplotlib
+matplotlib.use('Agg')
 
 def process_colometry():
     output_directory = "history"
@@ -27,6 +29,9 @@ def process_colometry():
 
     file_number = 1
     max_capture_count = 5
+    
+    # store captures data in a list, to be displayed to frontend later
+    captures_data = []
 
     # Initialize Neopixel LED
     pixels1 = neopixel.NeoPixel(board.D18, 7, brightness=1)
@@ -84,6 +89,19 @@ def process_colometry():
         avg_B = int(cv2.mean(B)[0])
         avg_G = int(cv2.mean(G)[0])
         avg_R = int(cv2.mean(R)[0])
+        
+        # store capture data
+        capture_info = {
+            "capture_number": file_number,
+            "timestamp": timestamp,
+            "rgb_values": {
+                "R": avg_R, 
+                "G": avg_G, 
+                "B": avg_B
+            }
+        }
+
+        captures_data.append(capture_info)
 
         if file_number > 1:
             pdf.showPage()
@@ -117,7 +135,10 @@ def process_colometry():
 
     picam2.stop_preview()
     
-    return pdf_filepath
+    return {
+        "pdf_filepath": pdf_filepath,
+        "captures": captures_data
+    }
 
 
 if __name__ == "__main__":
