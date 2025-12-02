@@ -32,7 +32,7 @@ for directory in [MAIN_OUTPUT_DIR, IMAGE_DIR, HISTOGRAM_DIR, PDF_DIR]:
 def read_root():
     return {"message": "Colometry API is running!"}
 
-app.post("/capture")
+@app.post("/capture")
 def run_colometry():
     """Triggers the colometry process and retrieves the latest results."""
     try:
