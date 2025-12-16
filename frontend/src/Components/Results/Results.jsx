@@ -15,15 +15,21 @@ ChartJS.register(
 );
 
 const Results = () => {
-    const [captureData, setCaptureData] = useState(null);
-    const [loading, setLoading] = useState(true);
+   const location = useLocation();
+    const navigate = useNavigate();
+    const [captureData, setCaptureData] = useState(location.state?.captureData || null);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectedCapture, setSelectedCapture] = useState(0);
 
-    // Load the latest results when component mounts
+    // Load data from navigation state if available
     useEffect(() => {
-        loadLatestResults();
-    }, []);
+        if (location.state?.captureData) {
+            setCaptureData(location.state.captureData);
+        } else {
+            setError("No capture data available. Please capture new images.");
+        }
+    }, [location.state]);
 
     const loadLatestResults = async () => {
         setLoading(true);
@@ -57,14 +63,13 @@ const Results = () => {
             if (!response.ok) throw new Error(`Error: ${response.statusText}`);
             const data = await response.json();
             setCaptureData(data);
-            setSelectedCapture(0); // Reset to first capture
+            setSelectedCapture(0);
         } catch (err) {
             console.error("Error:", err);
             setError(err.message);
         } finally {
             setLoading(false);
         }
-            
     };
 
     const getChartData = (capture) => {

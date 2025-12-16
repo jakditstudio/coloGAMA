@@ -22,7 +22,7 @@ const Hero = () => {
         alert("Image has been captured");
         // You can also handle the data returned from the API here if needed
 
-        navigate('/results'); // Navigate to Results page
+        navigate('/results', { state: { captureData: data } });
       } else {
         alert("Capture failed!");
       }
