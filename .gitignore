@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Python
+__pycache__/
+*.pyc
+venv/
+env/
+backend/coloGAMA/
+
+# Node
+node_modules/
+frontend/package-lock.json
+
+# Runtime outputs
+backend/history/
