@@ -2,6 +2,8 @@
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+
+  padding-top: 100px;
 }
 
 .capture-button {
@@ -13,6 +15,8 @@
   border-radius: 5px;
   cursor: pointer;
   margin-bottom: 20px;
+
+   margin-top: 20px;
 }
 
 .capture-button:disabled {
