@@ -27,11 +27,24 @@ const Results = () => {
     useEffect(() => {
         if (location.state?.captureData) {
             setCaptureData(location.state.captureData);
+            localStorage.setItem('latestCaptureData', JSON.stringify(location.state.captureData));
+
         } else {
+            const savedData = localStorage.getItem('latestCaptureData');
+            if (savedData){
+                try {
+                    const parsedData = JSON.parse(savedData);
+                    setCaptureData(parsedData);
+                } catch (error) {
+                    console.error("Error parsing saved capture data:", error);
+                    setError("Failed to load saved capture data.");
+                }
+            }
             setError("No capture data available. Please capture new images.");
         }
     }, [location.state]);
 
+    // unused function for loading latest results from backend
     const loadLatestResults = async () => {
         setLoading(true);
         setError(null);
@@ -63,6 +76,8 @@ const Results = () => {
             });
             if (!response.ok) throw new Error(`Error: ${response.statusText}`);
             const data = await response.json();
+            // save to local storage
+            localStorage.setItem('latestCaptureData', JSON.stringify(data));
             setCaptureData(data);
             setSelectedCapture(0);
         } catch (err) {

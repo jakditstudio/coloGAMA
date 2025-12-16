@@ -19,8 +19,11 @@ const Hero = () => {
 
       if (response.ok) {
         const data = await response.json();
+        
+        // save to local storage
+        localStorage.setItem('latestCapture', JSON.stringify(data));
+
         alert("Image has been captured");
-        // You can also handle the data returned from the API here if needed
 
         navigate('/results', { state: { captureData: data } });
       } else {
