@@ -1,3 +1,4 @@
+import traceback
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 import subprocess
@@ -44,9 +45,13 @@ def run_colometry():
             "pdf_url": f"http://localhost:8000/files/pdf/{os.path.basename(result['pdf_filepath'])}",
             "captures": result['captures']
         }
-
+        
+    except PermissionError as e:
+        raise HTTPException(status_code=500, 
+            detail=f"Permission denied: Run with 'sudo python main.py' or add user to gpio group. Error: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error details: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 def get_latest_file(directory: str, extension: str) -> Optional[str]:
     """Returns the latest file with the given extension from a directory."""
