@@ -39,8 +39,9 @@ const Results = () => {
                     console.error("Error parsing saved capture data:", error);
                     setError("Failed to load saved capture data.");
                 }
+            } else {
+                setError("No capture data available. Please capture new images.");
             }
-            setError("No capture data available. Please capture new images.");
         }
     }, [location.state]);
 
