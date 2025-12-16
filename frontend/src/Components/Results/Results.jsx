@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom'; // Add this line
 import './Results.css';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, 
 LineElement, Title, Tooltip, Legend } from 'chart.js';
