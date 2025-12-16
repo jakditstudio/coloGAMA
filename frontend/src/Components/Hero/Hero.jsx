@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import './Hero.css';
 import arrow from '../../assets/arrow.png';
-// import { Link } from 'react-router-dom'; // Import Link
+import { Link, useNavigate } from 'react-router-dom';
 
 const Hero = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleRunColometry = async () => {
     setLoading(true);
@@ -20,6 +21,8 @@ const Hero = () => {
         const data = await response.json();
         alert("Image has been captured");
         // You can also handle the data returned from the API here if needed
+
+        navigate('/results'); // Navigate to Results page
       } else {
         alert("Capture failed!");
       }

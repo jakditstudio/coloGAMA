@@ -14,11 +14,10 @@ const Navbar = () => {
       <img src={logo} alt="" className='logo'/>
       <ul className={mobileMenu?'':'hide-mobile-menu'}>
         <li><Link to="/">Capture</Link></li>
-        {/* <li><a href="#">Procedure</a></li> */}
+        <li><Link to="/results">Results</Link></li> {/* Add this line */}
         <li><Link to="/history">History</Link></li>
-        {/* <li><a href="#">Contact</a></li> */}
-           </ul>
-           <img src={menu_icon} alt="" className='menu-icon' onClick={toggleMenu}/>
+      </ul>
+      <img src={menu_icon} alt="" className='menu-icon' onClick={toggleMenu}/>
     </nav>
   )
 }

@@ -73,8 +73,11 @@ def process_colometry():
         # Plot histogram
         plt.clf()
         colors = ('b', 'g', 'r')
+        histogram_data = {}
+        
         for i, color in enumerate(colors):
             hist = cv2.calcHist([cropped_image], [i], None, [256], [0, 256])
+            histogram_data[color] = hist.flatten().tolist()
             plt.plot(hist, color=color, label=f'{color.upper()} channel')
         plt.xlabel('Pixel Intensity')
         plt.ylabel('Pixel Count')
@@ -94,11 +97,14 @@ def process_colometry():
         capture_info = {
             "capture_number": file_number,
             "timestamp": timestamp,
+            "image_url": f"/files/captures_image/{image_filename}",
+            "histogram_url": f"/files/histogram/{histogram_filename}",
             "rgb_values": {
                 "R": avg_R, 
                 "G": avg_G, 
                 "B": avg_B
-            }
+            },
+            "histogram_data": histogram_data
         }
 
         captures_data.append(capture_info)
