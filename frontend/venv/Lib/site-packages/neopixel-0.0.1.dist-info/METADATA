@@ -1,0 +1,24 @@
+Metadata-Version: 2.1
+Name: neopixel
+Version: 0.0.1
+Summary: An importable package to control LEDs via UDP protocol
+Home-page: https://github.com/ajatprabha/neopixel
+Author: Ajat Prabha
+License: MIT
+Platform: any
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: pyaudio
+
+# neo-pixel
+
+An importable package to control LED strip using an ESP8266 controller over UDP. This package is a re-write
+of [audio-reactive-led-strip](https://github.com/scottlawsonbc/audio-reactive-led-strip) project with Object oriented
+classes and better programmatic control over state of controller. 
+

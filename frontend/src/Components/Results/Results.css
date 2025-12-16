@@ -1,0 +1,135 @@
+.results-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  padding-top: 100px;
+}
+
+.capture-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+
+   margin-top: 20px;
+}
+
+.capture-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: red;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+.capture-selector {
+  margin: 20px 0;
+}
+
+.capture-selector button {
+  margin: 5px;
+  padding: 10px 20px;
+  border: 2px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.capture-selector button.active {
+  background-color: #2196F3;
+  color: white;
+  border-color: #2196F3;
+}
+
+.capture-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.image-section img {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.rgb-values {
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.rgb-display {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.rgb-value {
+  text-align: center;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.rgb-value.red {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.rgb-value.green {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.rgb-value.blue {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.color-preview {
+  width: 100%;
+  height: 100px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border: 2px solid #ddd;
+}
+
+.histogram-section {
+  grid-column: 1 / -1;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pdf-download {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.download-button {
+  display: inline-block;
+  background-color: #f44336;
+  color: white;
+  padding: 12px 24px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.download-button:hover {
+  background-color: #d32f2f;
+}
