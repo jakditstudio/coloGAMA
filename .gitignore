@@ -1,4 +1,4 @@
-# Logs
+# ===== Logs =====
 logs
 *.log
 npm-debug.log*
@@ -7,15 +7,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# ===== Node =====
+node_modules/
+dist/
+dist-ssr/
 *.local
 
-# Editor directories and files
+# ===== Editor / OS =====
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
@@ -23,17 +24,18 @@ dist-ssr
 *.sln
 *.sw?
 
-
-# Python
+# ===== Python =====
 __pycache__/
 *.pyc
 venv/
 env/
-backend/coloGAMA/
 
-# Node
-node_modules/
-frontend/package-lock.json
+# Python virtualenv inside backend
+backend/coloGAMA/bin/
+backend/coloGAMA/lib/
+backend/coloGAMA/include/
+backend/coloGAMA/share/
+backend/coloGAMA/pyvenv.cfg
 
-# Runtime outputs
+# ===== Runtime outputs =====
 backend/history/
