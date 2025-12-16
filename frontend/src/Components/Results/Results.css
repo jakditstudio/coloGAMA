@@ -6,6 +6,11 @@
   padding-top: 100px;
 }
 
+.results-container h2 {
+  margin-top: 20px; /* Add spacing for the title */
+  margin-bottom: 20px;
+}
+
 .capture-button {
   background-color: #4CAF50;
   color: white;
@@ -16,7 +21,7 @@
   cursor: pointer;
   margin-bottom: 20px;
 
-   margin-top: 20px;
+  margin-top: 20px;
 }
 
 .capture-button:disabled {
