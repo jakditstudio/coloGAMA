@@ -1,11 +1,25 @@
 import { useState, useEffect } from "react";
 import "./History.css";
 
+import { Document, Page, pdfjs } from "react-pdf";
+
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+
+// set pdf.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
 const History = () => {
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("all"); // all, pdf, image, histogram
+
+  const [viewModal, setViewModal] = useState(null); // for viewing images/histograms, files
+
+  // pdf viewer state
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
 
   useEffect(() => {
     fetch("http://localhost:8000/history")
@@ -101,13 +115,16 @@ const History = () => {
   };
 
   const handleView = (item) => {
-    if (item.type === "PDF") {
-      window.open(item.url, "_blank");
-    } else {
-      // Open image/histogram in modal or new tab
-      window.open(item.url, "_blank");
-    }
+   setViewModal(item);
+   setPageNumber(1);
+   setNumPages(null);
   };
+
+  const closeModal = () => {
+    setViewModal(null);
+    setPageNumber(1);
+    setNumPages(null);
+  }
 
   const handleDownload = (item) => {
     const link = document.createElement("a");
@@ -117,6 +134,23 @@ const History = () => {
     link.click();
     document.body.removeChild(link);
   };
+
+  // pdf viewer handlers
+  const onDocumentLoadSuccess = ({numPages}) => {
+    setNumPages(numPages);
+  }
+
+  const changePage = (offset) => {
+    setPageNumber(prevPageNumber => prevPageNumber + offset);
+  }
+
+  const previousPage = () => {
+    changePage(-1);
+  }
+  
+  const nextPage = () => {
+    changePage(1);
+  }
 
   if (loading) {
     return (
@@ -201,7 +235,7 @@ const History = () => {
                       onClick={() => handleView(item)}
                       title="View"
                     >
-                      👁️ View
+                      View
                     </button>
                     <button
                       className="action-btn download-btn"
@@ -217,6 +251,82 @@ const History = () => {
           </tbody>
         </table>
       </div>
+
+        {/* View Modal */}
+        {viewModal && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{viewModal.name}</h3>
+              <button className="close-btn" onClick={closeModal}>
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              {viewModal.type === "PDF" ? (
+                <div className="pdf-viewer-container">
+                  <Document
+                    file={viewModal.url}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    loading={
+                      <div className="pdf-loading">
+                        Loading PDF...
+                      </div>
+                    }
+                    error={
+                      <div className="pdf-error">
+                        Failed to load PDF. Please try downloading instead.
+                      </div>
+                    }
+                  >
+                    <Page 
+                      pageNumber={pageNumber} 
+                      renderTextLayer={true}
+                      renderAnnotationLayer={true}
+                      width={Math.min(window.innerWidth * 0.8, 800)}
+                    />
+                  </Document>
+                  {numPages && (
+                    <div className="pdf-controls">
+                      <button
+                        className="pdf-nav-btn"
+                        disabled={pageNumber <= 1}
+                        onClick={previousPage}
+                      >
+                        ← Previous
+                      </button>
+                      <span className="pdf-page-info">
+                        Page {pageNumber} of {numPages}
+                      </span>
+                      <button
+                        className="pdf-nav-btn"
+                        disabled={pageNumber >= numPages}
+                        onClick={nextPage}
+                      >
+                        Next →
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <img
+                  src={viewModal.url}
+                  alt={viewModal.name}
+                  className="image-viewer"
+                />
+              )}
+            </div>
+            <div className="modal-footer">
+              <button
+                className="action-btn download-btn"
+                onClick={() => handleDownload(viewModal)}
+              >
+                ⬇️ Download
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
