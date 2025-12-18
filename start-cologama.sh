@@ -10,7 +10,7 @@ sleep 2
 # Start backend in background
 echo "Starting backend..."
 cd /home/admin/Documents/coloGAMA/backend
-nohup sudo /home/admin/Documents/coloGAMA/backend/.venv/bin/python main.py > /tmp/cologama-backend.log 2>&1 &
+nohup sudo python main.py > /tmp/cologama-backend.log 2>&1 &
 BACKEND_PID=$!
 echo "Backend started with PID: $BACKEND_PID"
 
