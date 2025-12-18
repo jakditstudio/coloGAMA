@@ -21,6 +21,7 @@ const History = () => {
   // pdf viewer state
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
+  const [useFallback, setUseFallback] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:8000/history")
@@ -119,12 +120,14 @@ const History = () => {
    setViewModal(item);
    setPageNumber(1);
    setNumPages(null);
+   setUseFallback(false);
   };
 
   const closeModal = () => {
     setViewModal(null);
     setPageNumber(1);
     setNumPages(null);
+    setUseFallback(false);
   }
 
   const handleDownload = (item) => {
@@ -139,6 +142,12 @@ const History = () => {
   // pdf viewer handlers
   const onDocumentLoadSuccess = ({numPages}) => {
     setNumPages(numPages);
+    setUseFallback(false);
+  }
+
+  const onDocumentLoadError = (error) => {
+    console.error("Error loading PDF:", error);
+    setUseFallback(true); // switch to iframe fallback
   }
 
   const changePage = (offset) => {
@@ -266,48 +275,75 @@ const History = () => {
             <div className="modal-body">
               {viewModal.type === "PDF" ? (
                 <div className="pdf-viewer-container">
-                  <Document
-                    file={viewModal.url}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                    loading={
-                      <div className="pdf-loading">
-                        Loading PDF...
-                      </div>
-                    }
-                    error={
-                      <div className="pdf-error">
-                        Failed to load PDF. Please try downloading instead.
-                      </div>
-                    }
-                  >
-                    <Page 
-                      pageNumber={pageNumber} 
-                      renderTextLayer={true}
-                      renderAnnotationLayer={true}
-                      width={Math.min(window.innerWidth * 0.8, 800)}
-                    />
-                  </Document>
-                  {numPages && (
-                    <div className="pdf-controls">
-                      <button
-                        className="pdf-nav-btn"
-                        disabled={pageNumber <= 1}
-                        onClick={previousPage}
+                  {!useFallback ? (
+                    // Try PDF.js first
+                    <>
+                      <Document
+                        file={viewModal.url}
+                        onLoadSuccess={onDocumentLoadSuccess}
+                        onLoadError={onDocumentLoadError}
+                        loading={
+                          <div className="pdf-loading">
+                            Loading PDF with PDF.js...
+                          </div>
+                        }
+                        error={
+                          <div className="pdf-error">
+                            <p>PDF.js viewer failed. Switching to browser viewer...</p>
+                          </div>
+                        }
                       >
-                        ← Previous
-                      </button>
-                      <span className="pdf-page-info">
-                        Page {pageNumber} of {numPages}
-                      </span>
-                      <button
-                        className="pdf-nav-btn"
-                        disabled={pageNumber >= numPages}
-                        onClick={nextPage}
-                      >
-                        Next →
-                      </button>
+                        <Page 
+                          pageNumber={pageNumber} 
+                          renderTextLayer={true}
+                          renderAnnotationLayer={true}
+                          width={Math.min(window.innerWidth * 0.8, 800)}
+                        />
+                      </Document>
+                      {numPages && (
+                        <div className="pdf-controls">
+                          <button
+                            className="pdf-nav-btn"
+                            disabled={pageNumber <= 1}
+                            onClick={previousPage}
+                          >
+                            ← Previous
+                          </button>
+                          <span className="pdf-page-info">
+                            Page {pageNumber} of {numPages}
+                          </span>
+                          <button
+                            className="pdf-nav-btn"
+                            disabled={pageNumber >= numPages}
+                            onClick={nextPage}
+                          >
+                            Next →
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    // Fallback to iframe
+                    <div className="iframe-fallback-container">
+                      <div className="fallback-notice">
+                        Using browser's built-in PDF viewer
+                      </div>
+                      <iframe
+                        src={`${viewModal.url}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
+                        title={viewModal.name}
+                        className="pdf-iframe-viewer"
+                        type="application/pdf"
+                      />
                     </div>
                   )}
+                  
+                  {/* Manual fallback toggle button */}
+                  <button 
+                    className="toggle-viewer-btn"
+                    onClick={() => setUseFallback(!useFallback)}
+                  >
+                    {useFallback ? "Try PDF.js Viewer" : "Use Browser Viewer"}
+                  </button>
                 </div>
               ) : (
                 <img
