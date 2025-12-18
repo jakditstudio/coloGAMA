@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import "./History.css";
 
 const History = () => {
-  const [files, setFiles] = useState({ pdfs: [], images: [], histograms: [] });
-  const [selectedType, setSelectedType] = useState("pdfs");
-  const[selectedFile, setSelectedFile] = useState(null);
+  const [historyData, setHistoryData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedFilter, setSelectedFilter] = useState("all"); // all, pdf, image, histogram
 
   useEffect(() => {
     fetch("http://localhost:8000/history")
@@ -14,88 +14,209 @@ const History = () => {
         return res.json();
       })
       .then((data) => {
-        setFiles(data);
-        setError(null);
+        // Transform the data into a flat table format
+        const tableData = [];
+        
+        // Add PDFs
+        data.pdfs.forEach((file, index) => {
+          tableData.push({
+            id: `pdf-${index}`,
+            type: "PDF",
+            name: file.name,
+            url: file.url,
+            timestamp: extractTimestamp(file.name),
+          });
+        });
+
+        // Add Images
+        data.images.forEach((file, index) => {
+          tableData.push({
+            id: `img-${index}`,
+            type: "Image",
+            name: file.name,
+            url: file.url,
+            timestamp: extractTimestamp(file.name),
+          });
+        });
+
+        // Add Histograms
+        data.histograms.forEach((file, index) => {
+          tableData.push({
+            id: `hist-${index}`,
+            type: "Histogram",
+            name: file.name,
+            url: file.url,
+            timestamp: extractTimestamp(file.name),
+          });
+        });
+
+        // Sort by timestamp (newest first)
+        tableData.sort((a, b) => b.timestamp - a.timestamp);
+
+        setHistoryData(tableData);
+        setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching data:", err);
-        setError("Failed to load reports");
-        setFiles({ pdfs: [], images: [], histograms: [] });
+        setError("Failed to load history");
+        setLoading(false);
       });
   }, []);
 
-  const handleOptionClick = (type) => {
-    setSelectedType(type);
-    setSelectedFile(null); // Reset file preview when switching categories
-    if (files[type].length === 0) {
-      setError(`No ${type} found`);
+  const extractTimestamp = (filename) => {
+    // Extract timestamp from filename (format: name_YYYYMMDD_HHMMSS.ext)
+    const match = filename.match(/(\d{8}_\d{6})/);
+    if (match) {
+      const dateStr = match[1];
+      const year = dateStr.substring(0, 4);
+      const month = dateStr.substring(4, 6);
+      const day = dateStr.substring(6, 8);
+      const hour = dateStr.substring(9, 11);
+      const minute = dateStr.substring(11, 13);
+      const second = dateStr.substring(13, 15);
+      return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+    }
+    return new Date();
+  };
+
+  const formatDate = (date) => {
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const getFilteredData = () => {
+    if (selectedFilter === "all") return historyData;
+    return historyData.filter(item => item.type.toLowerCase() === selectedFilter);
+  };
+
+  const handleView = (item) => {
+    if (item.type === "PDF") {
+      window.open(item.url, "_blank");
     } else {
-      setError(null);
+      // Open image/histogram in modal or new tab
+      window.open(item.url, "_blank");
     }
   };
 
-  const handleFileClick = (file) => {
-    setSelectedFile(file); // Set the clicked file for preview
+  const handleDownload = (item) => {
+    const link = document.createElement("a");
+    link.href = item.url;
+    link.download = item.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
+  if (loading) {
+    return (
+      <div className="history-container">
+        <div className="loading">Loading history...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="history-container">
+        <div className="error">{error}</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="history">
-      <h2>Saved Reports</h2>
-      <div className="options">
+    <div className="history-container">
+      <div className="history-header">
+        <h1>Capture History</h1>
+        <p>View and download your previous colorimetry captures</p>
+      </div>
+
+      <div className="filter-tabs">
         <button
-          className={`option-button ${selectedType === "pdfs" ? "active" : ""}`}
-          onClick={() => handleOptionClick("pdfs")}
+          className={selectedFilter === "all" ? "active" : ""}
+          onClick={() => setSelectedFilter("all")}
         >
-          PDF
+          All Files ({historyData.length})
         </button>
         <button
-          className={`option-button ${selectedType === "images" ? "active" : ""}`}
-          onClick={() => handleOptionClick("images")}
+          className={selectedFilter === "pdf" ? "active" : ""}
+          onClick={() => setSelectedFilter("pdf")}
         >
-          Images
+          PDFs ({historyData.filter(i => i.type === "PDF").length})
         </button>
         <button
-          className={`option-button ${selectedType === "histograms" ? "active" : ""}`}
-          onClick={() => handleOptionClick("histograms")}
+          className={selectedFilter === "image" ? "active" : ""}
+          onClick={() => setSelectedFilter("image")}
         >
-          Histogram
+          Images ({historyData.filter(i => i.type === "Image").length})
+        </button>
+        <button
+          className={selectedFilter === "histogram" ? "active" : ""}
+          onClick={() => setSelectedFilter("histogram")}
+        >
+          Histograms ({historyData.filter(i => i.type === "Histogram").length})
         </button>
       </div>
 
-      <div className={`file-container ${selectedType}`}>
-        {error ? (
-          <p className="error">{error}</p>
-        ) : (
-          <ul>
-            {files[selectedType].map((file, index) => (
-              <li key={index}>
-                <button className="file-button" onClick={() => handleFileClick(file)}>
-                  {file.name}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="table-container">
+        <table className="history-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>File Name</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {getFilteredData().length === 0 ? (
+              <tr>
+                <td colSpan="4" className="no-data">
+                  No files found
+                </td>
+              </tr>
+            ) : (
+              getFilteredData().map((item) => (
+                <tr key={item.id}>
+                  <td>
+                    <span className={`badge badge-${item.type.toLowerCase()}`}>
+                      {item.type}
+                    </span>
+                  </td>
+                  <td className="file-name">{item.name}</td>
+                  <td>{formatDate(item.timestamp)}</td>
+                  <td className="actions">
+                    <button
+                      className="action-btn view-btn"
+                      onClick={() => handleView(item)}
+                      title="View"
+                    >
+                      👁️ View
+                    </button>
+                    <button
+                      className="action-btn download-btn"
+                      onClick={() => handleDownload(item)}
+                      title="Download"
+                    >
+                      ⬇️ Download
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
-
-      {/* File Preview Section */}
-      {selectedFile && (
-        <div className="preview-container">
-          {selectedType === "pdfs" ? (
-            <iframe
-              src={selectedFile.url}
-              className="pdf-viewer"
-              title="PDF Preview"
-            ></iframe>
-          ) : (
-            <img
-              src={selectedFile.url}
-              alt="Preview"
-              className="image-viewer"
-            />
-          )}
-        </div>
-      )}
     </div>
   );
 };
