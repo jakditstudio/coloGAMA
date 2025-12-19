@@ -2,7 +2,7 @@ nav{
     width: 100%;
     background-color: #202020;
     color: #fffffe;
-    padding: 4px 0;
+    padding: 6px 0;
     position: fixed;
     top: 0;
     left: 0;
@@ -12,13 +12,13 @@ nav{
 }
 .logo{
     width: auto;
-    height: 70px;
+    height: 45px;
 }
 nav ul li{
     display: inline-block;
     list-style: none;
-    margin: 25px 50px;
-    font-size: 24px;
+    margin: 15px 50px;
+    font-size: 18px;
 }
 .menu-icon{
     display: none;
@@ -28,7 +28,7 @@ nav ul li{
 @media (max-width: 1000px){
     .logo{
         width: auto;
-        height: 50px;
+        height: 45px;
     }    
     nav ul li{
         margin: 15px 15px;
@@ -36,7 +36,7 @@ nav ul li{
 }
 @media (max-width: 840px){
     nav{
-        padding: 15px 0;
+        padding: 10px 0;
     }
     nav ul{
         position: fixed;
@@ -51,12 +51,12 @@ nav ul li{
     }
     nav ul li{
         display: block;
-        margin: 25px 40px;
+        margin: 20px 40px;
     }
     .menu-icon{
         display: block;
         width: auto;
-        height: 50px;
+        height: 40px;
         cursor: pointer;
    
     }

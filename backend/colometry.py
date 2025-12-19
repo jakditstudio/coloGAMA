@@ -3,11 +3,13 @@ import matplotlib.pyplot as plt
 from reportlab.pdfgen import canvas
 import time
 import os
+
 import board
 import neopixel
 from picamera2 import Picamera2, Preview
 from libcamera import controls
 from libcamera import Transform
+
 import matplotlib
 matplotlib.use('Agg')
 
