@@ -11,6 +11,7 @@ from libcamera import controls
 from libcamera import Transform
 
 import matplotlib
+from create_pdf import PDFCreator
 matplotlib.use('Agg')
 
 def process_colometry():
@@ -121,6 +122,8 @@ def process_colometry():
             # Draw images and text on PDF
             # placeholder
             # these blocks would be used for calling the create pdf function from separate python module
+            PDFCreator.create_pdf(captures_data, pdf_output_directory)  # Call the create_pdf function with captures data and output directory
+
             pdf.drawInlineImage(image_filepath, 10, 720 - 40, width=80, height=390)
             pdf.drawInlineImage(histogram_filepath, 10, 720 - 160, width=400, height=120)
 
@@ -135,7 +138,6 @@ def process_colometry():
 
         pdf.save()
         print(f"PDF saved: {pdf_filepath}")
-        # end of placeholder
         
         # Cleanup temporary histogram files after saving to PDF
         for i in range(1, file_number):
