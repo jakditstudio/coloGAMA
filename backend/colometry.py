@@ -119,6 +119,8 @@ def process_colometry():
                 pdf.showPage()
 
             # Draw images and text on PDF
+            # placeholder
+            # these blocks would be used for calling the create pdf function from separate python module
             pdf.drawInlineImage(image_filepath, 10, 720 - 40, width=80, height=390)
             pdf.drawInlineImage(histogram_filepath, 10, 720 - 160, width=400, height=120)
 
@@ -127,13 +129,14 @@ def process_colometry():
             
             pdf.setFont("Helvetica", 12)
             pdf.drawString(10, 720 - 315, f'R: {avg_R}, G: {avg_G}, B: {avg_B}')
-
+            
             time.sleep(5)  # Wait before the next capture
             file_number += 1
 
         pdf.save()
         print(f"PDF saved: {pdf_filepath}")
-
+        # end of placeholder
+        
         # Cleanup temporary histogram files after saving to PDF
         for i in range(1, file_number):
             timestamp_to_remove = time.strftime("%Y%m%d_%H%M%S", time.localtime(time.time() - (i * 5)))

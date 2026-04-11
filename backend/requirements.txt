@@ -1,0 +1,19 @@
+# requirements for python backend
+fastapi
+uvicorn
+pydantic
+
+
+# opencv
+opencv-python-headless
+
+# plotting
+matplotlib
+
+# pdf generation
+reportlab
+
+
+# raspberry pi
+picamera2
+adafruit-circuitpython-neopixel
