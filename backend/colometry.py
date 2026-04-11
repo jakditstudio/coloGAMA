@@ -28,7 +28,7 @@ def process_colometry():
     # Prepare PDF file path
     current_datetime = time.strftime("%Y%m%d_%H%M%S")
     pdf_filename = f'output_{current_datetime}.pdf'
-    pdf_filepath = os.path.join(pdf_output_directory, pdf_filename)
+    final_pdf_path = None
 
     file_number = 1
     max_capture_count = 5
@@ -53,8 +53,6 @@ def process_colometry():
         picam2.start()
         
         time.sleep(2)  # Allow the camera to adjust
-
-        pdf = canvas.Canvas(pdf_filepath)
 
         while file_number <= max_capture_count:
             timestamp = time.strftime("%Y%m%d_%H%M%S")
@@ -114,30 +112,12 @@ def process_colometry():
                 "histogram_data": histogram_data
             }
 
-            captures_data.append(capture_info)
-
-            if file_number > 1:
-                pdf.showPage()
-
-            # Draw images and text on PDF
-            # placeholder
-            # these blocks would be used for calling the create pdf function from separate python module
-            PDFCreator.create_pdf(captures_data, pdf_output_directory)  # Call the create_pdf function with captures data and output directory
-
-            pdf.drawInlineImage(image_filepath, 10, 720 - 40, width=80, height=390)
-            pdf.drawInlineImage(histogram_filepath, 10, 720 - 160, width=400, height=120)
-
-            pdf.setFont("Helvetica-Bold", 12)
-            pdf.drawString(10, 720 - 300, f'RGB Values - Capture {file_number}')
-            
-            pdf.setFont("Helvetica", 12)
-            pdf.drawString(10, 720 - 315, f'R: {avg_R}, G: {avg_G}, B: {avg_B}')
-            
+            captures_data.append(capture_info)            
             time.sleep(5)  # Wait before the next capture
             file_number += 1
 
-        pdf.save()
-        print(f"PDF saved: {pdf_filepath}")
+        final_pdf_path = PDFCreator.create_pdf(captures_data, pdf_output_directory)
+        print(f"PDF saved: {final_pdf_path}")
         
         # Cleanup temporary histogram files after saving to PDF
         for i in range(1, file_number):
@@ -159,7 +139,7 @@ def process_colometry():
         pixels1.fill((0, 0, 0))  # Turn off Neopixel LEDs after processing
     
     return {
-        "pdf_filepath": pdf_filepath,
+        "pdf_filepath": final_pdf_path,
         "captures": captures_data
     }
 
