@@ -98,7 +98,7 @@ const History = () => {
   const formatDate = (date) => {
     const now = new Date();
     const diffTime = Math.abs(now - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // i think i should adjust the logic here, becaause today is yesterday (gets rounded up to 1 day), and yesterday is also 1 day (rounded up from 0.5 days)
     
     if (diffDays === 0) return "Today";
     if (diffDays === 1) return "Yesterday";
