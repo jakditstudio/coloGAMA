@@ -9,7 +9,7 @@ sleep 2
 
 # Start backend in background
 echo "Starting backend..."
-cd /home/admin/Documents/coloGAMA/backend
+cd /home/$(whoami)/Documents/coloGAMA/backend
 nohup sudo python main.py > /tmp/cologama-backend.log 2>&1 &
 BACKEND_PID=$!
 echo "Backend started with PID: $BACKEND_PID"
@@ -20,7 +20,7 @@ sleep 5
 
 # Start frontend in background
 echo "Starting frontend..."
-cd /home/admin/Documents/coloGAMA/frontend
+cd /home/$(whoami)/Documents/coloGAMA/frontend
 nohup npm run dev -- --host 0.0.0.0 > /tmp/cologama-frontend.log 2>&1 &
 FRONTEND_PID=$!
 echo "Frontend started with PID: $FRONTEND_PID"

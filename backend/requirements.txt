@@ -3,6 +3,9 @@ fastapi
 uvicorn
 pydantic
 
+# testing
+pytest
+unittest
 
 # opencv
 opencv-python-headless

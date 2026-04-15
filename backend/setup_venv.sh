@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script to activate virtual environment and install dependencies
 
-VENV_PATH="./palm_tree/bin/activate"
+VENV_PATH="./coloGAMA/bin/activate"
 REQ_FILE="./requirements.txt"
 
 echo "📦 [1/2] Checking virtual environment..."
@@ -11,9 +11,9 @@ if [ -f "$VENV_PATH" ]; then
     source "$VENV_PATH"
 else
     echo "❌ Virtual environment not found at $VENV_PATH"
-    echo "➡️ Creating new virtual environment palm_tree..."
-    python3 -m venv palm_tree
-    source palm_tree/bin/activate
+    echo "➡️ Creating new virtual environment coloGAMA..."
+    python3 -m venv coloGAMA
+    source coloGAMA/bin/activate
 fi
 
 echo ""
