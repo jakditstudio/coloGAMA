@@ -1,22 +1,21 @@
 # requirements for python backend
-fastapi
-uvicorn
-pydantic
+fastapi==0.141.1
+uvicorn==0.52.3
+pydantic==2.13.4
 
 # testing
 pytest
-unittest
 
 # opencv
-opencv-python-headless
+opencv-python-headless==5.0.0.93
 
 # plotting
-matplotlib
+matplotlib==3.11.1
 
 # pdf generation
-reportlab
+reportlab==5.0.0
 
 
 # raspberry pi
-picamera2
-adafruit-circuitpython-neopixel
+picamera2==0.3.37
+adafruit-circuitpython-neopixel==6.4.2
