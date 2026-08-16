@@ -3,7 +3,7 @@
 # Path: /home/abyan/Documents/BUAT_MAGANG/VISION-TAILS/activate_venv.sh
 
 # Absolute or relative path to the venv
-VENV_PATH="./.venv/bin/activate"
+VENV_PATH="./coloGAMA/bin/activate"
 
 # Check if the venv exists
 if [ -f "$VENV_PATH" ]; then
