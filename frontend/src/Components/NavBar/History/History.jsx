@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./History.css";
 
 import { Document, Page, pdfjs } from "react-pdf";
+import { getHistory } from "../../../service/api";
 
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -24,11 +25,7 @@ const History = () => {
   const [useFallback, setUseFallback] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8000/history")
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
+    getHistory()
       .then((data) => {
         // Transform the data into a flat table format
         const tableData = [];
@@ -74,7 +71,7 @@ const History = () => {
       })
       .catch((err) => {
         console.error("Error fetching data:", err);
-        setError("Failed to load history");
+        setError(err.message);
         setLoading(false);
       });
   }, []);

@@ -4,6 +4,7 @@ import './Results.css';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, 
 LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { triggerCapture, getHistory } from '../../service/api';
 
 ChartJS.register(
   CategoryScale,
@@ -51,14 +52,7 @@ const Results = () => {
         setError(null);
 
         try {
-            const response = await fetch('http://localhost:8000/history');
-            
-            if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-            
-            const data = await response.json();
-
-            // For now, we'll need to modify this to get the actual capture data
-            // This is a placeholder - you might want to store the last capture data
+            const data = await getHistory();
             setError("No capture data available. Please capture new images.");
         } catch (err) {
             console.error("Error:", err);
@@ -72,11 +66,7 @@ const Results = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:8000/capture', {
-                method: 'POST', 
-            });
-            if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-            const data = await response.json();
+            const data = await triggerCapture();
             // save to local storage
             localStorage.setItem('latestCaptureData', JSON.stringify(data));
             setCaptureData(data);
@@ -182,7 +172,7 @@ const Results = () => {
               <div className="image-section">
                 <h3>Captured Image</h3>
                 <img
-                  src={`http://localhost:8000${captureData.captures[selectedCapture].image_url}`}
+                  src={`/api${captureData.captures[selectedCapture].image_url}`}
                   alt={`Capture ${selectedCapture + 1}`}
                   className="captured-image"
                 />

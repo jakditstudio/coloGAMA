@@ -49,7 +49,7 @@ def process_colometry():
         picam2.set_controls({"AfMode": controls.AfModeEnum.Manual, "LensPosition": 11.})
         
         # Start camera preview
-        picam2.start_preview(Preview.QTGL)
+        picam2.start_preview(Preview.NULL) # used to be QTGL
         picam2.start()
         
         time.sleep(2)  # Allow the camera to adjust
