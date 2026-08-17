@@ -134,7 +134,8 @@ Raspberry Pi GPIO Layout:
 ### System
 - **OS**: Raspberry Pi OS (64-bit, Debian-based)
 - **Runtime**: Node.js 18+, Python 3.9+
-- **Process Management**: systemd / custom bash scripts
+- **Web Server / Reverse Proxy**: nginx (serves built frontend, proxies `/api/` to backend)
+- **Process Management**: systemd (backend auto-start + auto-restart)
 
 ---
 
@@ -162,28 +163,34 @@ Raspberry Pi GPIO Layout:
 
 ```bash
 # Clone repository
-cd ~/Documents
+cd ~
 git clone https://github.com/jakditstudio/coloGAMA.git
 cd coloGAMA/backend
 
-# Create virtual environment
-python3 -m venv .venv
+# Create virtual environment with access to system packages
+# (needed for apt-installed picamera2/libcamera bindings — pip's picamera2
+# wheel alone has no libcamera bindings, see Troubleshooting)
+python3 -m venv --system-site-packages .venv
 source .venv/bin/activate
 
-# Install Python dependencies
+# Install Python dependencies (versions pinned in requirements.txt)
 pip install --upgrade pip
-pip install fastapi uvicorn picamera2 opencv-python-headless matplotlib reportlab
-pip install adafruit-circuitpython-neopixel
+pip install -r requirements.txt
+
+# picamera2's libcamera bindings must come from apt, not pip
+sudo apt install -y python3-picamera2 python3-libcamera
 
 # Test camera
 python -c "from picamera2 import Picamera2; print('Camera OK')"
 ```
 
+> **Consistent paths matter.** Whatever path you clone into (`~/coloGAMA` above), use that exact same path everywhere later — nginx's `root`, and the systemd service's `WorkingDirectory`/`ExecStart`. A mismatched path (leftover `Documents/`, wrong username) is the most common cause of both nginx 500s and systemd failing to start.
+
 ### Frontend Setup
 
 ```bash
 # Navigate to frontend
-cd ~/Documents/coloGAMA/frontend
+cd ~/coloGAMA/frontend
 
 # Install dependencies
 npm install
@@ -192,121 +199,162 @@ npm install
 npm run build
 ```
 
-### Auto-Start Configuration
+### Auto-Start Configuration (Production: nginx + systemd)
 
-#### Option 1: Bash Scripts (Simple)
+coloGAMA runs in production as two decoupled services: **nginx** serves the built frontend and reverse-proxies `/api/` to the backend, while **systemd** keeps the FastAPI backend running and auto-restarting. This replaces the old bash-script + crontab approach — nginx stays up and keeps serving the page even if the backend crashes or is mid-restart, instead of the whole site going down with it. See [docs/plan/coloGAMA-deployment-plan-revised.md](docs/plan/coloGAMA-deployment-plan-revised.md) and [docs/plan/why-nginx-for-cologama.md](docs/plan/why-nginx-for-cologama.md) for the full reasoning and step-by-step.
 
+**Build the frontend for production:**
 ```bash
-# Create start script
-nano ~/start-cologama.sh
+cd ~/coloGAMA/frontend
+npm install
+npm run build
+```
+This produces `frontend/dist/` — static HTML/CSS/JS, no dev server needed at runtime.
+
+**Install and configure nginx:**
+```bash
+sudo apt install -y nginx
+sudo nano /etc/nginx/sites-available/cologama
 ```
 
-Paste this content:
+```nginx
+server {
+    listen 80;
+    server_name _;
 
-```bash
-#!/bin/bash
+    root /home/<your-user>/coloGAMA/frontend/dist;
+    index index.html;
 
-echo "Starting coloGAMA services..."
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
 
-# Kill any existing processes first
-sudo pkill -f "python main.py" 2>/dev/null
-pkill -f "npm run dev" 2>/dev/null
-sleep 2
-
-# Start backend in background
-echo "Starting backend..."
-cd /home/admin/Documents/coloGAMA/backend
-nohup sudo python main.py > /tmp/cologama-backend.log 2>&1 &
-BACKEND_PID=$!
-echo "Backend started with PID: $BACKEND_PID"
-
-# Wait for backend to start
-sleep 5
-
-# Start frontend in background
-echo "Starting frontend..."
-cd /home/admin/Documents/coloGAMA/frontend
-nohup npm run dev -- --host 0.0.0.0 > /tmp/cologama-frontend.log 2>&1 &
-FRONTEND_PID=$!
-echo "Frontend started with PID: $FRONTEND_PID"
-
-# Save PIDs
-echo $BACKEND_PID > /tmp/cologama-backend.pid
-echo $FRONTEND_PID > /tmp/cologama-frontend.pid
-
-echo "✓ coloGAMA services started!"
-echo "Access at: http://localhost:5173"
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
 ```
 
 ```bash
-# Make executable
-chmod +x ~/start-cologama.sh
+sudo ln -s /etc/nginx/sites-available/cologama /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo systemctl restart nginx
+sudo systemctl enable nginx
+```
 
-# Add to crontab for auto-start
+> **Watch out for placeholder paths.** Every `admin` / `/home/admin/...` in example configs must be swapped for your actual Pi username — a leftover `admin` reference in `User=`, `WorkingDirectory=`, `ExecStart=`, or nginx's `root` is the #1 cause of a service failing to start or nginx returning 500.
+>
+> **Watch out for home directory permissions too.** Pi OS defaults `/home/<user>` to `750` — nginx runs as `www-data` and can't traverse into your home folder to read `dist/` unless you open it up:
+> ```bash
+> chmod o+x ~ ~/coloGAMA ~/coloGAMA/frontend
+> chmod -R o+rX ~/coloGAMA/frontend/dist
+> ```
+> A `500 Internal Server Error` with `rewrite or internal redirection cycle` + `Permission denied` in `/var/log/nginx/error.log` is this exact issue.
+
+**Backend as a systemd service:**
+```bash
+sudo nano /etc/systemd/system/cologama-backend.service
+```
+
+```ini
+[Unit]
+Description=coloGAMA FastAPI Backend
+After=network.target
+
+[Service]
+Type=simple
+User=<your-user>
+Group=<your-user>
+WorkingDirectory=/home/<your-user>/coloGAMA/backend
+ExecStart=/home/<your-user>/coloGAMA/backend/<venv-name>/bin/python main.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable cologama-backend
+sudo systemctl start cologama-backend
+sudo systemctl status cologama-backend
+```
+
+Should show `active (running)`. If it fails, check logs:
+```bash
+sudo journalctl -u cologama-backend -f
+```
+
+**Remove the old crontab auto-start**, if you'd set one up previously:
+```bash
 crontab -e
-# Add this line:
-@reboot /home/admin/start-cologama.sh
-
-# Create stop script
-nano ~/stop-cologama.sh
+# delete: @reboot /home/<your-user>/start-cologama.sh
 ```
-
-Paste stop script content:
-
-```bash
-#!/bin/bash
-
-echo "Stopping coloGAMA services..."
-
-if [ -f /tmp/cologama-backend.pid ]; then
-    BACKEND_PID=$(cat /tmp/cologama-backend.pid)
-    sudo kill $BACKEND_PID 2>/dev/null
-    rm /tmp/cologama-backend.pid
-fi
-
-if [ -f /tmp/cologama-frontend.pid ]; then
-    FRONTEND_PID=$(cat /tmp/cologama-frontend.pid)
-    kill $FRONTEND_PID 2>/dev/null
-    rm /tmp/cologama-frontend.pid
-fi
-
-sudo pkill -f "python main.py" 2>/dev/null
-pkill -f "npm run dev" 2>/dev/null
-
-echo "✓ coloGAMA services stopped!"
-```
-
-```bash
-chmod +x ~/stop-cologama.sh
-```
-
-#### Option 2: Systemd Services (Production)
-
-See [docs/systemd-setup.md](docs/systemd-setup.md) for systemd configuration.
 
 ---
 
 ## 📖 Usage
 
+### Connecting via Phone Hotspot (Field / Remote Use)
+
+For field use away from a fixed wifi network, connect the Pi to a phone hotspot so any other device (phone, laptop) on that same hotspot can reach the web interface.
+
+**1. On the phone, create a mobile hotspot:**
+- Name (SSID): `cologama`
+- Password: `cologama123`
+
+(Android: Settings → Connections/Network & Internet → Hotspot & Tethering → Wi-Fi Hotspot, set name/password there. iOS: Settings → Personal Hotspot.)
+
+**2. Connect the Pi to it**, either via desktop wifi menu, or headless over SSH:
+```bash
+sudo raspi-config
+# System Options → Wireless LAN → enter SSID "cologama" and password "cologama123"
+```
+or with `nmcli` (NetworkManager, default on recent Pi OS):
+```bash
+sudo nmcli device wifi connect "cologama" password "cologama123"
+```
+
+**3. Confirm the Pi connected:**
+```bash
+iwgetid   # should show ESSID:"cologama"
+```
+
+**4. From any other device connected to the same `cologama` hotspot**, open:
+```
+http://raspberrypi.local/
+```
+(See [Accessing the Interface](#accessing-the-interface) below — mDNS makes this work even if the Pi's IP changes across hotspot sessions, as covered by the `.local` fallback there.)
+
+> ⚠️ **Security note:** `cologama123` is a weak, predictable password for a network you may use in shared/public field settings. Anyone who guesses or is told the SSID+password gets full LAN access to the Pi (and, since it's still `allow_origins=["*"]` in CORS, to the API too). Fine for quick internal testing; if this hotspot is used somewhere less trusted, swap in a stronger, non-guessable password.
+
 ### Starting the System
 
-```bash
-# Manual start
-~/start-cologama.sh
+Both services auto-start on boot. To manage them manually:
 
-# Or if using systemd
-sudo systemctl start cologama-backend cologama-frontend
+```bash
+sudo systemctl start cologama-backend
+sudo systemctl start nginx
 ```
 
 ### Accessing the Interface
 
+nginx serves everything on port 80 — no port number needed, and no dev server to start manually.
+
 1. **On Raspberry Pi**:
    - Open Chromium browser
-   - Navigate to: `http://localhost:5173`
+   - Navigate to: `http://localhost/`
 
-2. **From Another Device**:
-   - Find Raspberry Pi IP: `hostname -I`
-   - Navigate to: `http://192.168.x.x:5173`
+2. **From Another Device** (recommended — works even if the Pi's IP changes, e.g. switching wifi/hotspot):
+   - Navigate to: `http://raspberrypi.local/`
+   - Requires `avahi-daemon` running on the Pi (`systemctl status avahi-daemon` — usually preinstalled) and mDNS support on the connecting device (works out of the box on macOS/iOS/Linux; on Android, use Chrome for best support)
+   - If `.local` doesn't resolve on a given device, fall back to the IP: find it with `hostname -I` on the Pi, then navigate to `http://192.168.x.x/`
 
 ### Capturing Images
 
@@ -326,11 +374,8 @@ sudo systemctl start cologama-backend cologama-frontend
 ### Stopping the System
 
 ```bash
-# Manual stop
-~/stop-cologama.sh
-
-# Or if using systemd
-sudo systemctl stop cologama-backend cologama-frontend
+sudo systemctl stop cologama-backend
+sudo systemctl stop nginx
 ```
 
 ---
@@ -338,13 +383,16 @@ sudo systemctl stop cologama-backend cologama-frontend
 ## 📡 API Documentation
 
 ### Base URL
+
+In production, all backend routes are mounted under `/api` and reached through nginx's reverse proxy on port 80 — you should never hit port 8000 directly from a browser or the frontend:
 ```
-http://localhost:8000
+http://<pi-ip>/api
 ```
+(FastAPI/uvicorn itself still listens on `127.0.0.1:8000`, but that's only for nginx's internal `proxy_pass` — not exposed externally.)
 
 ### Endpoints
 
-#### `GET /`
+#### `GET /api/`
 Health check endpoint.
 
 **Response:**
@@ -354,20 +402,20 @@ Health check endpoint.
 }
 ```
 
-#### `POST /capture`
+#### `POST /api/capture`
 Trigger a new colorimetry capture sequence.
 
 **Response:**
 ```json
 {
   "message": "Colometry process completed successfully.",
-  "pdf_url": "http://localhost:8000/files/pdf/output_20251219_123456.pdf",
+  "pdf_url": "/api/files/pdf/output_20251219_123456.pdf",
   "captures": [
     {
       "capture_number": 1,
       "timestamp": "20251219_123456",
-      "image_url": "/files/captures_image/captured_image_20251219_123456.jpg",
-      "histogram_url": "/files/histogram/histogram_20251219_123456.png",
+      "image_url": "/api/files/captures_image/captured_image_20251219_123456.jpg",
+      "histogram_url": "/api/files/histogram/histogram_20251219_123456.png",
       "rgb_values": {
         "R": 203,
         "G": 177,
@@ -384,7 +432,7 @@ Trigger a new colorimetry capture sequence.
 }
 ```
 
-#### `GET /history`
+#### `GET /api/history`
 Get list of all historical captures.
 
 **Response:**
@@ -393,7 +441,7 @@ Get list of all historical captures.
   "pdfs": [
     {
       "name": "output_20251219_123456.pdf",
-      "url": "http://localhost:8000/history/pdf/output_20251219_123456.pdf"
+      "url": "/api/history/pdf/output_20251219_123456.pdf"
     }
   ],
   "images": [/* ... */],
@@ -401,16 +449,16 @@ Get list of all historical captures.
 }
 ```
 
-#### `GET /files/{file_path}`
+#### `GET /api/files/{file_path}`
 Serve static files (images, PDFs, histograms).
 
-#### `GET /history/pdf/{filename}`
+#### `GET /api/history/pdf/{filename}`
 Get specific PDF file.
 
-#### `GET /history/image/{filename}`
+#### `GET /api/history/image/{filename}`
 Get specific image file.
 
-#### `GET /history/histogram/{filename}`
+#### `GET /api/history/histogram/{filename}`
 Get specific histogram file.
 
 ---
@@ -442,11 +490,16 @@ coloGAMA/
 │   ├── package.json            # NPM dependencies
 │   └── vite.config.js          # Vite configuration
 │
-├── start-cologama.sh           # Start script
-├── stop-cologama.sh            # Stop script
+├── docs/
+│   └── plan/                   # Deployment plan + design notes
+│
 ├── README.md                   # This file
 └── LICENSE                     # MIT License
 ```
+
+**Production config lives outside the repo, on the Pi itself:**
+- `/etc/nginx/sites-available/cologama` — nginx site config (frontend + `/api/` proxy)
+- `/etc/systemd/system/cologama-backend.service` — backend auto-start/auto-restart unit
 
 ---
 
@@ -471,23 +524,23 @@ coloGAMA/
 ### Camera Not Detected
 
 ```bash
-# Check camera connection
-vcgencmd get_camera
-
-# Should output: supported=1 detected=1
-
-# Test with libcamera
-libcamera-hello
+# Test with libcamera — the definitive check
+rpicam-hello
 ```
+`vcgencmd get_camera` is unreliable on Pi 5 / Bookworm (camera stack moved fully to libcamera) — it may print `Can't open device file: /dev/vcio_gencmd` even when the camera works fine. Don't treat that as an error; trust `rpicam-hello` instead.
 
 ### Permission Denied Errors
 
 ```bash
-# Add user to required groups
+# Add user to required groups (comma-separated, not dot-separated!)
 sudo usermod -aG video,gpio,i2c $USER
 
 # Reboot to apply
 sudo reboot
+
+# Verify:
+groups
+# should list video, gpio, i2c
 ```
 
 ### LED Not Working
@@ -496,22 +549,78 @@ sudo reboot
 # Check GPIO permissions
 sudo chown root:gpio /dev/gpiomem
 sudo chmod g+rw /dev/gpiomem
-
-# Run backend with sudo
-sudo python main.py
 ```
+Do **not** run the backend with `sudo` — the systemd service runs as your normal user and relies on the `video`/`gpio`/`i2c` group membership above instead. If NeoPixel/GPIO access still fails under systemd, double check `groups` includes all three and that you rebooted after the `usermod`.
 
-### Port Already in Use
+#### `Error: ws2811_init failed with code -9 (Failed to create mailbox device)`
+
+Not an nginx or network issue — this is `rpi_ws281x` (NeoPixel's underlying driver, Pi 4 only) failing to open `/dev/vcio`, the VideoCore mailbox device used for PWM/DMA LED timing. It defaults to `crw------- root root` — no group access at all, unlike `/dev/gpiomem` which the steps above already open up.
 
 ```bash
-# Find and kill process on port 8000
+ls -la /dev/vcio   # confirm: root root, mode 600 → this is the problem
+```
+
+Immediate fix (resets on reboot):
+```bash
+sudo chown root:gpio /dev/vcio
+sudo chmod g+rw /dev/vcio
+```
+
+Persistent fix (survives reboot) — udev rule:
+```bash
+echo 'SUBSYSTEM=="vcio", GROUP="gpio", MODE="0660"' | sudo tee /etc/udev/rules.d/99-vcio.rules
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+ls -la /dev/vcio   # should now show crw-rw---- root gpio
+```
+
+> ⚠️ **Syntax matters**: `SUBSYSTEM=="vcio"` needs **no space** between `==` and the quoted value. `SUBSYSTEM== "vcio"` (with a space) silently fails to match — the rule gets ignored with no error, and `/dev/vcio` stays `root:root` even after `udevadm trigger`. If verification still shows `root root` after reloading, check the rule file for this exact typo first.
+
+Then restart the backend and retest:
+```bash
+sudo systemctl restart cologama-backend
+sudo journalctl -u cologama-backend -f
+```
+
+### nginx / Web Page Issues
+
+```bash
+sudo nginx -t                      # config syntax check
+sudo systemctl status nginx        # is it running
+curl -I http://localhost/          # should be 200 OK
+curl http://localhost/api/         # should return {"message": "..."}
+sudo tail -f /var/log/nginx/error.log
+```
+
+Common causes of a `500 Internal Server Error`:
+- **Wrong `root` path** in `/etc/nginx/sites-available/cologama` — must point at the real `frontend/dist` path with your actual username, not a leftover `admin` placeholder.
+- **Permission denied** — Pi OS home dirs default to `750`, so `www-data` (nginx's user) can't read into `/home/<user>/` unless opened up:
+  ```bash
+  chmod o+x ~ ~/coloGAMA ~/coloGAMA/frontend
+  chmod -R o+rX ~/coloGAMA/frontend/dist
+  ```
+  Look for `rewrite or internal redirection cycle` + `Permission denied` in `error.log` — that combination is this exact issue.
+
+### Backend Service Won't Start
+
+```bash
+sudo systemctl status cologama-backend
+sudo journalctl -u cologama-backend -f
+```
+- `Failed to determine user credentials` / `status=217/USER` → `User=`/`Group=` in the `.service` file reference a user that doesn't exist (usually a leftover `admin` placeholder) — fix to your actual Pi username.
+- `Unable to locate executable ... No such file or directory` / `status=203/EXEC` → `ExecStart` path is wrong, often a stray/missing `Documents/` segment inconsistent with `WorkingDirectory`. Both paths must actually exist — verify with `ls` before restarting.
+
+### Port Already in Use (development only)
+
+```bash
+# Find and kill process on port 8000 (backend)
 sudo lsof -ti:8000 | xargs kill -9
 
-# Find and kill process on port 5173
+# Find and kill process on port 5173 (frontend dev server)
 lsof -ti:5173 | xargs kill -9
 ```
 
-### Frontend Won't Start
+### Frontend Won't Build
 
 ```bash
 # Clear npm cache
@@ -525,11 +634,12 @@ npm install
 ### View Logs
 
 ```bash
-# Backend logs
-tail -f /tmp/cologama-backend.log
+# Backend (systemd)
+sudo journalctl -u cologama-backend -f
 
-# Frontend logs
-tail -f /tmp/cologama-frontend.log
+# nginx
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
 ```
 
 ---

@@ -131,9 +131,15 @@ def process_colometry():
     finally:  # Always clean up camera resources
         try:
             picam2.stop_preview()
+        except Exception:
+            pass
+        try:
             picam2.stop()
+        except Exception:
+            pass
+        try:
             picam2.close()  # Add this to properly close camera
-        except:
+        except Exception:
             pass
         
         pixels1.fill((0, 0, 0))  # Turn off Neopixel LEDs after processing
