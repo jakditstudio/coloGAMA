@@ -17,7 +17,7 @@ export async function apiRequest(endpoint, options = {}) {
             const data = await response.json();
             detail = data.detail || detail;
         } catch {
-            // response wasn't JSON, keep default message
+            
         }
         throw new Error(detail);
     }
