@@ -3,19 +3,28 @@
 @theme {
   --color-primary: #630ed4;
   --color-primary-container: #7c3aed;
+  --color-on-primary-container: #ede0ff;
   --color-secondary: #DDD6FE;
   --color-surface: #fef7ff;
   --color-surface-dim: #F8F9FF;
+  --color-surface-container: #f3ebfa;
+  --color-surface-container-low: #f9f1ff;
   --color-on-surface: #1d1a24;
+  --color-on-surface-variant: #4a4455;
   --color-chart-red: #EF4444;
   --color-chart-green: #10B981;
   --color-chart-blue: #3B82F6;
   --color-success: #10B981;
+  --color-success-bg: #dcfce7;
+  --color-success-text: #166534;
   --color-warning: #F59E0B;
   --color-error: #ba1a1a;
   --color-slate-heading: #1E293B;
   --color-slate-body: #64748B;
+  --color-secondary-fixed-dim: #c5c6cc;
+  --color-outline-variant: #ccc3d8;
   --color-border: #E2E8F0;
+  --color-pure-white: #FFFFFF;
 
   --font-sans: "Inter", sans-serif;
 

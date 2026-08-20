@@ -9,6 +9,12 @@ import 'react-pdf/dist/Page/TextLayer.css';
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 // pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url).toString();
 
+const badgeClass = {
+  PDF: "bg-chart-red/10 text-chart-red",
+  Image: "bg-chart-blue/10 text-chart-blue",
+  Histogram: "bg-chart-green/10 text-chart-green",
+};
+
 const History = () => {
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(true);
