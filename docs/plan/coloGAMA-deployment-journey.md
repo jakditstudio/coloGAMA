@@ -197,6 +197,59 @@ Verified: `crw-rw---- root gpio`, from the rule itself. Backend restarted, `ws28
 
 ---
 
+## 12. NeoPixel LED, round 2 — `Error: NeoPixel support requires running with sudo, please try again!`
+
+Right after the `/dev/vcio` fix above, a new error appeared. Different mechanism this time: `rpi_ws281x` has a **hardcoded `os.getuid() != 0` check** baked into the library, completely independent of device file permissions. No amount of group/permission tuning on `/dev/vcio` satisfies it — the process must literally be running as root.
+
+Two options considered: run the backend as root outright, or keep the non-root user and scope `sudo` narrowly to just this one process via `/etc/sudoers.d`. Chose the former — this is a single-purpose lab device, not multi-tenant/internet-facing, and running as root is the standard, expected way `rpi_ws281x` gets deployed on a Pi 4 in practice. The narrow-sudoers approach would have added setup complexity for a marginal security gain, since the backend process ends up privileged either way.
+
+**Fix**: `/etc/systemd/system/cologama-backend.service` — `User=cologama`/`Group=cologama` → `User=root`/`Group=root`. Reloaded, restarted, confirmed `active (running)` with no sudo/mailbox error. (Note: this partially undoes the "retire sudo" goal from the original deployment plan — a deliberate, documented tradeoff, not an oversight.)
+
+---
+
+## 13. Camera lock — `ERROR: failed to acquire camera / Pipeline handler in use by another process`
+
+Hit while re-testing `rpicam-hello` right after the root fix above. Initially looked like a fresh hardware fault, but resolved on its own before a definitive cause could be pinned to the cable/power — which pointed at something *software* holding a stale lock rather than the camera itself being broken.
+
+Traced to a real bug in `backend/colometry.py`'s cleanup block:
+
+```python
+# before — one shared try/except: if stop_preview() throws,
+# stop() and close() never run, and the bare except hides that close() was skipped
+finally:
+    try:
+        picam2.stop_preview()
+        picam2.stop()
+        picam2.close()
+    except:
+        pass
+```
+
+`try`/`except` stops executing the moment *any* line inside throws — it doesn't skip forward to the next line, it abandons the whole block. So if `stop_preview()` throws (plausible right after a hardware hiccup mid-capture, e.g. a timeout like the one seen earlier in this log), `picam2.close()` — the call that actually releases the camera at the OS/libcamera level — never runs. The bare `except: pass` then hides the failure entirely, so nothing errors or logs, but the camera stays locked at the OS level until something else clears it.
+
+**Fix**: split into three independent `try`/`except` blocks, so each cleanup call gets its own isolated attempt and a failure in one doesn't block the next:
+```python
+finally:
+    try:
+        picam2.stop_preview()
+    except Exception:
+        pass
+    try:
+        picam2.stop()
+    except Exception:
+        pass
+    try:
+        picam2.close()  # now guaranteed to be attempted regardless of the above
+    except Exception:
+        pass
+```
+
+Also created a small `restart-cologama-backend.sh` helper (`systemctl restart` + `status`) for applying backend `.py` changes going forward — systemd doesn't hot-reload code, a restart is required after every edit, easy to forget mid-debugging.
+
+Backend restarted with the fix, full capture flow confirmed working end-to-end through nginx.
+
+---
+
 ## What's still open
 
 - [ ] Remove the old crontab `@reboot` auto-start line, if one still exists from before the systemd/nginx switch (`crontab -l` to check, `crontab -e` to remove)
