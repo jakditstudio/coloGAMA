@@ -154,102 +154,93 @@ const History = () => {
   const previousPage = () => {
     changePage(-1);
   }
-  
   const nextPage = () => {
     changePage(1);
   }
 
   if (loading) {
     return (
-      <div className="history-container">
-        <div className="loading">Loading history...</div>
+      <div className="p-margin-mobile md:p-margin-desktop max-w-container mx-auto">
+        <div className="text-slate-body">Loading history...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="history-container">
-        <div className="error">{error}</div>
+      <div className="p-margin-mobile md:p-margin-desktop max-w-container mx-auto">
+        <p className="text-error bg-error/10 border border-error/30 rounded-lg px-4 py-2 text-sm">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="history-container">
-      <div className="history-header">
-        <h1>Capture History</h1>
-        <p>View and download your previous colorimetry captures</p>
+    <div className="p-margin-mobile md:p-margin-desktop max-w-container mx-auto">
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-slate-heading">Capture History</h1>
+        <p className="text-slate-body">View and download your previous colorimetry captures</p>
       </div>
 
-      <div className="filter-tabs">
-        <button
-          className={selectedFilter === "all" ? "active" : ""}
-          onClick={() => setSelectedFilter("all")}
-        >
-          All Files ({historyData.length})
-        </button>
-        <button
-          className={selectedFilter === "pdf" ? "active" : ""}
-          onClick={() => setSelectedFilter("pdf")}
-        >
-          PDFs ({historyData.filter(i => i.type === "PDF").length})
-        </button>
-        <button
-          className={selectedFilter === "image" ? "active" : ""}
-          onClick={() => setSelectedFilter("image")}
-        >
-          Images ({historyData.filter(i => i.type === "Image").length})
-        </button>
-        <button
-          className={selectedFilter === "histogram" ? "active" : ""}
-          onClick={() => setSelectedFilter("histogram")}
-        >
-          Histograms ({historyData.filter(i => i.type === "Histogram").length})
-        </button>
+      <div className="flex gap-2 flex-wrap mb-6">
+        {[
+          { key: "all", label: `All Files (${historyData.length})` },
+          { key: "pdf", label: `PDFs (${historyData.filter(i => i.type === "PDF").length})` },
+          { key: "image", label: `Images (${historyData.filter(i => i.type === "Image").length})` },
+          { key: "histogram", label: `Histograms (${historyData.filter(i => i.type === "Histogram").length})` },
+        ].map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setSelectedFilter(f.key)}
+            className={`px-4 py-2 rounded-full min-h-11 text-sm font-medium ${
+              selectedFilter === f.key ? "bg-primary-container text-white" : "bg-surface-dim text-slate-body"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
       </div>
 
-      <div className="table-container">
-        <table className="history-table">
+      <div className="bg-white rounded-xl border border-border shadow-sm overflow-x-auto">
+        <table className="w-full text-left">
           <thead>
-            <tr>
-              <th>Type</th>
-              <th>File Name</th>
-              <th>Date</th>
-              <th>Actions</th>
+            <tr className="border-b border-border">
+              <th className="p-4 text-sm font-semibold text-slate-heading">Type</th>
+              <th className="p-4 text-sm font-semibold text-slate-heading">File Name</th>
+              <th className="p-4 text-sm font-semibold text-slate-heading">Date</th>
+              <th className="p-4 text-sm font-semibold text-slate-heading">Actions</th>
             </tr>
           </thead>
           <tbody>
             {getFilteredData().length === 0 ? (
               <tr>
-                <td colSpan="4" className="no-data">
+                <td colSpan="4" className="p-8 text-center text-slate-body">
                   No files found
                 </td>
               </tr>
             ) : (
               getFilteredData().map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <span className={`badge badge-${item.type.toLowerCase()}`}>
+                <tr key={item.id} className="border-b border-border last:border-0">
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${badgeClass[item.type]}`}>
                       {item.type}
                     </span>
                   </td>
-                  <td className="file-name">{item.name}</td>
-                  <td>{formatDate(item.timestamp)}</td>
-                  <td className="actions">
+                  <td className="p-4 text-on-surface">{item.name}</td>
+                  <td className="p-4 text-slate-body">{formatDate(item.timestamp)}</td>
+                  <td className="p-4 flex gap-2">
                     <button
-                      className="action-btn view-btn"
                       onClick={() => handleView(item)}
-                      title="View"
+                      className="min-h-11 min-w-11 flex items-center justify-center rounded-lg hover:bg-secondary/40 text-primary-container"
+                      aria-label="View"
                     >
-                      View
+                      <span className="material-symbols-outlined">visibility</span>
                     </button>
                     <button
-                      className="action-btn download-btn"
                       onClick={() => handleDownload(item)}
-                      title="Download"
+                      className="min-h-11 min-w-11 flex items-center justify-center rounded-lg hover:bg-secondary/40 text-primary-container"
+                      aria-label="Download"
                     >
-                      ⬇️ Download
+                      <span className="material-symbols-outlined">download</span>
                     </button>
                   </td>
                 </tr>
@@ -259,60 +250,48 @@ const History = () => {
         </table>
       </div>
 
-        {/* View Modal */}
-        {viewModal && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>{viewModal.name}</h3>
-              <button className="close-btn" onClick={closeModal}>
-                ✕
+      {viewModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={closeModal}>
+          <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-4 border-b border-border">
+              <h3 className="font-semibold text-slate-heading">{viewModal.name}</h3>
+              <button onClick={closeModal} className="min-h-11 min-w-11 flex items-center justify-center rounded-lg hover:bg-secondary/40" aria-label="Close">
+                <span className="material-symbols-outlined">close</span>
               </button>
             </div>
-            <div className="modal-body">
+            <div className="p-4">
               {viewModal.type === "PDF" ? (
-                <div className="pdf-viewer-container">
+                <div>
                   {!useFallback ? (
-                    // Try PDF.js first
                     <>
                       <Document
                         file={viewModal.url}
                         onLoadSuccess={onDocumentLoadSuccess}
                         onLoadError={onDocumentLoadError}
-                        loading={
-                          <div className="pdf-loading">
-                            Loading PDF with PDF.js...
-                          </div>
-                        }
-                        error={
-                          <div className="pdf-error">
-                            <p>PDF.js viewer failed. Switching to browser viewer...</p>
-                          </div>
-                        }
+                        loading={<div className="text-slate-body">Loading PDF with PDF.js...</div>}
+                        error={<div className="text-error">PDF.js viewer failed. Switching to browser viewer...</div>}
                       >
-                        <Page 
-                          pageNumber={pageNumber} 
+                        <Page
+                          pageNumber={pageNumber}
                           renderTextLayer={true}
                           renderAnnotationLayer={true}
                           width={Math.min(window.innerWidth * 0.8, 800)}
                         />
                       </Document>
                       {numPages && (
-                        <div className="pdf-controls">
+                        <div className="flex items-center justify-center gap-4 mt-4">
                           <button
-                            className="pdf-nav-btn"
                             disabled={pageNumber <= 1}
                             onClick={previousPage}
+                            className="min-h-11 px-4 rounded-lg bg-surface-dim text-slate-body disabled:opacity-40"
                           >
                             ← Previous
                           </button>
-                          <span className="pdf-page-info">
-                            Page {pageNumber} of {numPages}
-                          </span>
+                          <span className="text-sm text-slate-body">Page {pageNumber} of {numPages}</span>
                           <button
-                            className="pdf-nav-btn"
                             disabled={pageNumber >= numPages}
                             onClick={nextPage}
+                            className="min-h-11 px-4 rounded-lg bg-surface-dim text-slate-body disabled:opacity-40"
                           >
                             Next →
                           </button>
@@ -320,42 +299,33 @@ const History = () => {
                       )}
                     </>
                   ) : (
-                    // Fallback to iframe
-                    <div className="iframe-fallback-container">
-                      <div className="fallback-notice">
-                        Using browser's built-in PDF viewer
-                      </div>
+                    <div>
+                      <p className="text-sm text-slate-body mb-2">Using browser's built-in PDF viewer</p>
                       <iframe
                         src={`${viewModal.url}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
                         title={viewModal.name}
-                        className="pdf-iframe-viewer"
-                        type="application/pdf"
+                        className="w-full h-[70vh] rounded-lg border border-border"
                       />
                     </div>
                   )}
-                  
-                  {/* Manual fallback toggle button */}
-                  <button 
-                    className="toggle-viewer-btn"
+                  <button
                     onClick={() => setUseFallback(!useFallback)}
+                    className="min-h-11 mt-4 px-4 rounded-lg bg-surface-dim text-slate-body text-sm"
                   >
                     {useFallback ? "Try PDF.js Viewer" : "Use Browser Viewer"}
                   </button>
                 </div>
               ) : (
-                <img
-                  src={viewModal.url}
-                  alt={viewModal.name}
-                  className="image-viewer"
-                />
+                <img src={viewModal.url} alt={viewModal.name} className="w-full rounded-lg" />
               )}
             </div>
-            <div className="modal-footer">
+            <div className="p-4 border-t border-border">
               <button
-                className="action-btn download-btn"
                 onClick={() => handleDownload(viewModal)}
+                className="min-h-11 px-6 rounded-lg bg-primary-container text-white font-medium flex items-center gap-2"
               >
-                ⬇️ Download
+                <span className="material-symbols-outlined">download</span>
+                Download
               </button>
             </div>
           </div>

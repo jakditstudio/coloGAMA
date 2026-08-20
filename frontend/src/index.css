@@ -1,4 +1,64 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@import "tailwindcss"
+
+@theme {
+  --color-primary: #630ed4;
+  --color-primary-container: #7c3aed;
+  --color-secondary: #DDD6FE;
+  --color-surface: #fef7ff;
+  --color-surface-dim: #F8F9FF;
+  --color-on-surface: #1d1a24;
+  --color-chart-red: #EF4444;
+  --color-chart-green: #10B981;
+  --color-chart-blue: #3B82F6;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #ba1a1a;
+  --color-slate-heading: #1E293B;
+  --color-slate-body: #64748B;
+  --color-border: #E2E8F0;
+
+  --font-sans: "Inter", sans-serif;
+
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  --spacing-gutter: 24px;
+  --spacing-margin-mobile: 16px;
+  --spacing-margin-desktop: 40px;
+
+  --container-container: 1280px;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans;
+  }
+}
+
+@layer utilities {
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.5); }
+    70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(124, 58, 237, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+  }
+  .pulse-ring {
+    animation: pulse-ring 2s infinite;
+  }
+
+  /* home.html's hero background treatment */
+  .hero-gradient {
+    background: linear-gradient(180deg, rgba(15, 10, 25, 0.8) 0%, rgba(15, 10, 25, 0.95) 100%);
+  }
+}
+
+
+/* LEGACY STYLING BELOW */
+
+/* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 *{
     margin: 0;
     padding: 0;
@@ -50,4 +110,4 @@ a{
     .btn{
         padding: 14px 22px;
     }
-}
+} */
