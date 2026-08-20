@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import "./History.css";
-
 import { Document, Page, pdfjs } from "react-pdf";
 import { getHistory } from "../../../service/api";
 
