@@ -19,9 +19,9 @@ const SideNav = () => (
     {/* Desktop sidebar */}
     <aside className="hidden md:flex flex-col w-64 shrink-0 bg-surface-dim border-r border-border h-screen sticky top-0 p-4">
       {/* <img src={logo} alt="coloGAMA" className="h-10 mb-8 px-2" /> */}
-      <div className="text-2xl font-semibold text-primary tracking-tight mb-8 px-2">
+      <Link to="/" className="text-2xl font-semibold text-primary tracking-tight mb-8 px-2">
         <span className="text-primary-container">colo</span>GAMA
-      </div>
+      </Link>
       <nav className="flex flex-col gap-1">
         {navItems.map((item) => (
           <NavLink key={item.to} to={item.to} className={linkClasses} end={item.to === "/"}>
