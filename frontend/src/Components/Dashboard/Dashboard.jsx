@@ -10,10 +10,12 @@ const Dashboard = () => {
   // state variables for handling live feed
   const [feedError, setFeedError] = useState(null);
   const [feedLoaded, setFeedLoaded] = useState(false);
+  const [streamKey, setStreamKey] = useState(Date.now()); // Unique key to force reload of the feed
 
   const handleFeedError = () => {
     setFeedError(true);
     setFeedLoaded(false);
+    setStreamKey(Date.now()); // Force reload of the feed
   };
   
   const handleFeedLoad = () => {
@@ -54,7 +56,8 @@ const Dashboard = () => {
               <p className="text-sm text-slate-body mt-1">Connect device to begin</p>
             </div>
             <img
-              src="/api/stream"
+              key={streamKey}
+              src={`/api/stream?timestamp=${streamKey}`}
               alt="Live Camera Feed"
               className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 ${feedLoaded && !feedError ? 'opacity-100' : 'opacity-0'}`}
               onError={handleFeedError}
