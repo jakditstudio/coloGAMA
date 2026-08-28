@@ -60,9 +60,7 @@ class liveFeedParams:
                            b'Content-Type: image/jpeg\r\n'
                            b'Content-Length: ' + str(len(frame)).encode() + b'\r\n\r\n'
                            + frame + b'\r\n')
-                    
-                # Here you would send the frame to the client
-                # For example, you could yield it in a FastAPI endpoint
-
         except Exception as e:
-            logging.warning('Removed streaming client: %s', str(e))        
+            logging.warning('Removed streaming client: %s', str(e)) 
+        finally:
+            self.stop_feed()  # Ensure the feed is stopped when the generator is done       
