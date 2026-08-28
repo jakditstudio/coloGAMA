@@ -28,7 +28,7 @@ class liveFeedParams:
         self.PREVIEW_LED_COLOR = (255, 255, 200)  # Set initial color for preview
         self.PREVIEW_BRIGHTNESS = 0.5  # Set brightness for preview
         self.pixels1 = neopixel.NeoPixel(board.D18, 7, brightness=self.PREVIEW_BRIGHTNESS)
-        self.picam2 = None
+        self.picam2 = None  
         
     def start_feed(self, output):
         self.pixels1.fill(self.PREVIEW_LED_COLOR)  # Set initial color

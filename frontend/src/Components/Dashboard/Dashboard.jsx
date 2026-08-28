@@ -7,6 +7,20 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // state variables for handling live feed
+  const [feedError, setFeedError] = useState(null);
+  const [feedLoaded, setFeedLoaded] = useState(false);
+
+  const handleFeedError = () => {
+    setFeedError(true);
+    setFeedLoaded(false);
+  };
+  
+  const handleFeedLoad = () => {
+    setFeedError(false);
+    setFeedLoaded(true);
+  };
+
   const handleRunColometry = async () => {
     setLoading(true);
     setError(null);
@@ -39,6 +53,13 @@ const Dashboard = () => {
               <p className="text-on-surface-variant">Camera Feed Offline</p>
               <p className="text-sm text-slate-body mt-1">Connect device to begin</p>
             </div>
+            <img
+              src="/api/stream"
+              alt="Live Camera Feed"
+              className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 ${feedLoaded && !feedError ? 'opacity-100' : 'opacity-0'}`}
+              onError={handleFeedError}
+              onLoad={handleFeedLoad}
+            />
           </div>
         </div>
 
