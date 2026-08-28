@@ -68,6 +68,7 @@ This project integrates:
 - ✅ **Responsive Web Interface**: Access from any device on the network
 - ✅ **History Browser**: View and download all past analyses
 - ✅ **LED Lighting Control**: NeoPixel LED ring for consistent illumination
+- ✅ **Real-Time Video Streaming**: Live camera positioning preview on the Dashboard before capture (MJPEG stream, mutually exclusive with capture)
 
 ### Technical Features
 
@@ -728,16 +729,14 @@ For support, email abyanradityarakapasha@mail.ugm.ac.id or open an issue on GitH
 
 ## 🗺️ Roadmap
 
-- [ ] Machine learning for chemical classification
-- [ ] Multi-language support
 - [ ] Cloud storage integration
 - [ ] Mobile app version
-- [ ] Real-time video streaming
-- [ ] Database integration (PostgreSQL)
+- [ ] Database integration
 - [ ] User authentication
-- [ ] Batch processing mode
 - [ ] Export to CSV/Excel
 - [ ] Calibration wizard
+
+> **Note on "Database integration"**: recommend **SQLite**, not PostgreSQL. Today, captured RGB values and histogram data only exist *transiently* — inside the `/api/capture` HTTP response and one browser's `localStorage` (overwritten by the very next capture), or baked into the generated PDF as human-readable output. There's currently no way to query past readings (e.g. "which captures had R > 200") or chart trends across captures — `/api/history` only lists file *names* with a timestamp embedded in the filename, never the actual measurement values, since nothing persists them anywhere structured. A lightweight embedded database (SQLite — a single file, no separate server process to run, built into Python's standard library) would let each capture also write one row of structured data, making real querying/filtering/trend-analysis possible. Full PostgreSQL would be unnecessary operational overhead for a single Raspberry Pi with one operator — no concurrent-write load, no multi-service access pattern that would actually benefit from a client-server database.
 
 ---
 

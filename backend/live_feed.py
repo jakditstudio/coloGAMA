@@ -47,6 +47,10 @@ class liveFeedParams:
         except Exception as e:
             pass
         try:
+            self.picam2.close()
+        except Exception as e:
+            pass
+        try:
             self.pixels1.fill((0, 0, 0))  # Turn off the Neopixel LED
         except Exception as e:
             pass
