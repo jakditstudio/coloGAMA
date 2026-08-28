@@ -31,6 +31,7 @@ class liveFeedParams:
         self.picam2 = None  
         
     def start_feed(self, output):
+        self.stop_feed()  # Ensure any existing feed is stopped before starting a new one
         self.pixels1.fill(self.PREVIEW_LED_COLOR)  # Set initial color
 
         self.picam2 = Picamera2()
