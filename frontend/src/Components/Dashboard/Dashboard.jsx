@@ -48,7 +48,7 @@ const Dashboard = () => {
             </span>
           </div>
           <div className="flex-1 bg-surface-dim rounded-lg overflow-hidden relative flex items-center justify-center border border-dashed border-outline-variant">
-            <div className={`z-10 text-center transition-opacity duration-500 ${!feedLoaded || feedError ? 'opacity-0' : 'opacity-100'}}`}>
+            <div className={`z-10 text-center transition-opacity duration-500 ${feedLoaded && !feedError ? 'opacity-0' : 'opacity-100'}`}>
               <span className="material-symbols-outlined text-5xl text-outline-variant mb-2">linked_camera</span>
               <p className="text-on-surface-variant">Camera Feed Offline</p>
               <p className="text-sm text-slate-body mt-1">Connect device to begin</p>
@@ -60,6 +60,7 @@ const Dashboard = () => {
               onError={handleFeedError}
               onLoad={handleFeedLoad}
             />
+          
           </div>
         </div>
 
