@@ -1,13 +1,16 @@
 import traceback
 from fastapi import FastAPI, HTTPException, APIRouter
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 import subprocess
 import os
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from colometry import process_colometry
+from live_feed import liveFeedParams, StreamingOutput
 
 app = FastAPI()
+live_feed = liveFeedParams()  # Initialize live feed parameters and camera
+streaming_output = StreamingOutput()  # Initialize streaming output
 
 # Allow frontend requests
 app.add_middleware(
@@ -31,6 +34,16 @@ PDF_DIR = os.path.join(MAIN_OUTPUT_DIR, "pdf")
 for directory in [MAIN_OUTPUT_DIR, IMAGE_DIR, HISTOGRAM_DIR, PDF_DIR]:
     os.makedirs(directory, exist_ok=True)
 
+
+@router.get("/stream")
+def video_stream():
+    ''' Endpoint for video streaming '''
+    live_feed.start_feed(streaming_output)  # Start the live feed
+    return StreamingResponse(
+            live_feed.generate_frames(streaming_output),
+            media_type="multipart/x-mixed-replace; boundary=FRAME"
+        )
+
 @router.get("/")
 def read_root():
     return {"message": "Colometry API is running!"}
@@ -38,6 +51,7 @@ def read_root():
 @router.post("/capture")
 def run_colometry():
     """Triggers the colometry process and retrieves the latest results."""
+    live_feed.stop_feed()  # Stop the live feed before capturing
     try:
         # Run the colometry process directly
         result = process_colometry()

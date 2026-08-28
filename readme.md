@@ -182,7 +182,15 @@ sudo apt install -y python3-picamera2 python3-libcamera
 
 # Test camera
 python -c "from picamera2 import Picamera2; print('Camera OK')"
+
+# Once the camera is confirmed working, HOLD these packages so a future
+# `apt upgrade` can't silently break camera detection — see Troubleshooting
+# "Camera worked yesterday, suddenly stops being detected" below for why.
+dpkg -l | grep -iE "libcamera|rpicam"   # find your exact installed package names first
+sudo apt-mark hold python3-libcamera python3-picamera2 libcamera0.3 rpicam-apps   # adjust names to match the above
 ```
+
+> **Hold the camera stack once it works.** `sudo apt upgrade` bumping `libcamera`/`rpicam-apps` to a newer version has broken camera detection in the field with zero hardware changes involved — confirmed, not hypothetical (see Troubleshooting). Run `apt-mark hold` on the camera-related packages immediately after confirming `Camera OK` above, before anyone runs a routine `apt upgrade` later and loses camera detection without realizing why.
 
 > **Consistent paths matter.** Whatever path you clone into (`~/coloGAMA` above), use that exact same path everywhere later — nginx's `root`, and the systemd service's `WorkingDirectory`/`ExecStart`. A mismatched path (leftover `Documents/`, wrong username) is the most common cause of both nginx 500s and systemd failing to start.
 
@@ -528,6 +536,34 @@ coloGAMA/
 rpicam-hello
 ```
 `vcgencmd get_camera` is unreliable on Pi 5 / Bookworm (camera stack moved fully to libcamera) — it may print `Can't open device file: /dev/vcio_gencmd` even when the camera works fine. Don't treat that as an error; trust `rpicam-hello` instead.
+
+#### Camera worked yesterday, suddenly stops being detected — check for a `libcamera` regression from `apt upgrade`
+
+Confirmed root cause in the field: `sudo apt update && sudo apt upgrade` silently bumped `libcamera` to a broken version, with **zero hardware/cable changes involved**. Symptoms look identical to a dead sensor or bad cable — `Picamera2()` raises `RuntimeError: No camera number 0 found - use "rpicam-hello --list-cameras" to check connected cameras`, `rpicam-hello --list-cameras` reports `No cameras available!`, and `dmesg` shows no `unicam`/sensor-probe lines at boot at all. Swapping in a known-good CSI cable and reseating the connector will **not** fix this — the cause is the package version, not the hardware.
+
+**Confirm this is what's happening:**
+```bash
+rpicam-hello --version
+```
+Confirmed broken in the field: `libcamera v0.7.2+rpt20260817`
+Confirmed working (prior version): `libcamera v0.7.1+rpt20260609+25-e62f461d-dirty`
+
+If your version changed around the time the camera stopped working, this is almost certainly it — don't waste time re-checking cables/connectors first.
+
+**Fix:**
+```bash
+dpkg -l | grep -iE "libcamera|rpicam"
+```
+Check `/var/cache/apt/archives/` for a cached `.deb` matching the known-working version — if present:
+```bash
+sudo dpkg -i /var/cache/apt/archives/<matching-old-version-file>.deb
+```
+Once reverted, **hold it** so it can't happen again:
+```bash
+sudo apt-mark hold python3-libcamera python3-picamera2 libcamera0.3 rpicam-apps
+```
+
+**Prevention**: hold these packages right after your initial camera setup confirms working (see Backend Setup above) — don't wait to get bitten by this first. If you ever do need to intentionally upgrade the camera stack, unhold (`sudo apt-mark unhold ...`), upgrade deliberately, and re-test `rpicam-hello` before re-holding — never let it happen silently via a routine `apt upgrade -y`.
 
 ### Permission Denied Errors
 
