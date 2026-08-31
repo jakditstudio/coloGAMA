@@ -15,7 +15,7 @@ from picamera2.encoders import JpegEncoder
 from picamera2.outputs import FileOutput
 
 
-def open_camera(retries=5, delay=1.0):
+def open_camera(retries=5, delay=2.0):
     """Opens the camera and returns a Picamera2 instance."""
     for _ in range(retries):
         try:
