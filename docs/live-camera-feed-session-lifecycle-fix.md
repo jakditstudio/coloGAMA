@@ -142,7 +142,13 @@ Implemented across `live_feed.py`, `main.py`, `colometry.py`, `api.js`, and `Das
 - `colometry.py`: uses `open_camera()` instead of a raw `Picamera2()` call, so it retries if it races the preview session's not-yet-finished cleanup.
 - `api.js` / `Dashboard.jsx`: new `stopFeed()` helper; `useEffect` cleanup calls it on unmount, so navigating away from the Dashboard without capturing still releases the camera and turns off the preview LED.
 
-Not yet done — real-device testing against the verification plan below. Retry count/backoff interval (3 attempts, ~200ms) is a starting guess, not yet tuned against real hardware timing.
+## Retry budget tuning (post-deploy finding)
+
+Real-device testing surfaced a *different* bug from the ones above, not the shared-state race — closing a Picamera2 camera involves real hardware/driver teardown (Unicam/ISP pipeline release) that isn't instant. Confirmed via `journalctl`: `Camera in Running state trying acquire() requiring state Available` errors repeating continuously for 3+ seconds after a camera handoff (preview→capture or capture→preview), on every retry attempt.
+
+The original retry budget (3 attempts, 0.2s apart — 0.6s total) was roughly 5x too small for what the hardware actually needs. Bumped to **5 attempts, 1.0s apart** (~4-5s total budget) based on the observed 3+ second real requirement, with margin. Simple flat bump chosen over exponential backoff for now — revisit backoff only if 5s still isn't enough after further real-device testing.
+
+Minor inefficiency, not yet addressed: `open_camera()` sleeps after its *final* failed attempt too, before raising — wastes one retry interval before the error actually surfaces.
 
 ## Verification plan once implemented
 
