@@ -25,6 +25,12 @@ export async function apiRequest(endpoint, options = {}) {
     return response;
 }
 
+export const stopFeed = async () => {
+    return apiRequest('/stream/stop', {
+        method: 'POST',
+    });
+};
+
 export const triggerCapture = async () => {
     const response = await apiRequest('/capture', {
         method: 'POST',

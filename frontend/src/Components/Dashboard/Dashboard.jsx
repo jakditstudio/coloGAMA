@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { triggerCapture } from '../../service/api';
+import { triggerCapture, stopFeed } from '../../service/api';
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
@@ -11,6 +11,12 @@ const Dashboard = () => {
   const [feedError, setFeedError] = useState(null);
   const [feedLoaded, setFeedLoaded] = useState(false);
   const [streamKey, setStreamKey] = useState(Date.now()); // Unique key to force reload of the feed
+
+  useEffect(() => {
+    return () => {
+      stopFeed().catch(() => {}); // Best-effort: stop the live feed when leaving the Dashboard
+    };
+  }, []);
 
   const handleFeedError = () => {
     setFeedError(true);

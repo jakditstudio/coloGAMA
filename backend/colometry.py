@@ -6,9 +6,10 @@ import os
 
 import board
 import neopixel
-from picamera2 import Picamera2, Preview
+from picamera2 import Preview
 from libcamera import controls
 from libcamera import Transform
+from live_feed import open_camera
 
 import matplotlib
 from create_pdf import PDFCreator
@@ -41,7 +42,7 @@ def process_colometry():
     pixels1.fill((255, 255, 200))  # Set initial color
 
     # Initialize Picamera2
-    picam2 = Picamera2()
+    picam2 = open_camera()
     
     try:  # Add try-except-finally block
         camera_config = picam2.create_still_configuration(main={"size": (1920, 1080)}, lores={"size": (640, 480)}, display="lores",  transform=Transform(vflip=1))

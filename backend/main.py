@@ -10,7 +10,6 @@ from live_feed import liveFeedParams, StreamingOutput
 
 app = FastAPI()
 live_feed = liveFeedParams()  # Initialize live feed parameters and camera
-streaming_output = StreamingOutput()  # Initialize streaming output
 
 # Allow frontend requests
 app.add_middleware(
@@ -38,11 +37,19 @@ for directory in [MAIN_OUTPUT_DIR, IMAGE_DIR, HISTOGRAM_DIR, PDF_DIR]:
 @router.get("/stream")
 def video_stream():
     ''' Endpoint for video streaming '''
-    live_feed.start_feed(streaming_output)  # Start the live feed
+    streaming_output = StreamingOutput()  # Initialize streaming output
+    picam2, stop_event = live_feed.start_feed(streaming_output)  # Start the live feed
     return StreamingResponse(
-            live_feed.generate_frames(streaming_output),
+            live_feed.generate_frames(picam2, streaming_output, stop_event),
             media_type="multipart/x-mixed-replace; boundary=FRAME"
         )
+
+@router.post("/stream/stop")
+def stop_stream():
+    ''' Signals the currently running live feed session to stop '''
+    if live_feed.current_stop_event:
+        live_feed.current_stop_event.set()
+    return {"message": "Stop signal sent."}
 
 @router.get("/")
 def read_root():
@@ -51,7 +58,7 @@ def read_root():
 @router.post("/capture")
 def run_colometry():
     """Triggers the colometry process and retrieves the latest results."""
-    live_feed.stop_feed()  # Stop the live feed before capturing
+    stop_stream()  # Signal the live feed to stop
     try:
         # Run the colometry process directly
         result = process_colometry()
