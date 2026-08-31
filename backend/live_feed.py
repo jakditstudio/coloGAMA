@@ -5,6 +5,7 @@ import logging
 import socketserver
 from http import server
 from threading import Condition
+import threading
 
 from libcamera import controls
 from libcamera import Transform
@@ -35,6 +36,8 @@ class liveFeedParams:
         self.pixels1.fill(self.PREVIEW_LED_COLOR)  # Set initial color
 
         self.picam2 = Picamera2()
+        logging.info("Starting live feed...")
+        logging.warning(f"[start feed] Picamera2 id: {id(self.picam2)} thread={threading.current_thread().name}")
         self.camera_config = self.picam2.create_video_configuration(main={"size": (640, 480)}, transform=Transform(vflip=1))
         self.picam2.configure(self.camera_config)
         self.picam2.set_controls({"AfMode": controls.AfModeEnum.Manual, "LensPosition": 11.})
@@ -42,6 +45,8 @@ class liveFeedParams:
         
 
     def stop_feed(self):
+        logging.info("Stopping live feed...")
+        logging.warning(f"[stop feed] Picamera2 id: {id(self.picam2)} thread={threading.current_thread().name}")
         try:
             self.picam2.stop_recording()
         except Exception as e:
@@ -56,6 +61,8 @@ class liveFeedParams:
             pass
 
     def generate_frames(self, output):
+        logging.info("Generating frames for streaming...")
+        logging.warning(f"[generate frames] started thread={threading.current_thread().name}")
         try:
             while True:
                 with output.condition:
@@ -68,4 +75,5 @@ class liveFeedParams:
         except Exception as e:
             logging.warning('Removed streaming client: %s', str(e)) 
         finally:
+            logging.info("Stopping live feed thread=%s...", threading.current_thread().name)
             self.stop_feed()  # Ensure the feed is stopped when the generator is done       
