@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { triggerCapture, stopFeed } from '../../service/api';
 
@@ -10,7 +10,10 @@ const Dashboard = () => {
   // state variables for handling live feed
   const [feedError, setFeedError] = useState(null);
   const [feedLoaded, setFeedLoaded] = useState(false);
+  const [feedUnavailable, setFeedUnavailable] = useState(false); // give up ui after 3 retries
   const [streamKey, setStreamKey] = useState(Date.now()); // Unique key to force reload of the feed
+  const MAX_FEED_RETRIES = 3; // Maximum number of retries for the feed
+  const retryCountRef = useRef(0);
 
   useEffect(() => {
     return () => {
@@ -21,12 +24,19 @@ const Dashboard = () => {
   const handleFeedError = () => {
     setFeedError(true);
     setFeedLoaded(false);
+    retryCountRef.current += 1;
+    if (retryCountRef.current > MAX_FEED_RETRIES) {
+      setFeedUnavailable(true);
+      return;
+    }
     setStreamKey(Date.now()); // Force reload of the feed
   };
   
   const handleFeedLoad = () => {
     setFeedError(false);
     setFeedLoaded(true);
+    retryCountRef.current = 0; // Reset retry count on successful load
+    setFeedUnavailable(false); // Reset feed unavailable state on successful load
   };
 
   const handleRunColometry = async () => {
@@ -55,10 +65,12 @@ const Dashboard = () => {
               <span className="w-2 h-2 rounded-full bg-success inline-block" /> Live
             </span>
           </div>
-          <div className="grow shrink-0 md:flex-1 aspect-[4/3] md:aspect-auto bg-surface-dim rounded-lg overflow-hidden relative flex items-center justify-center border border-dashed border-outline-variant">
+          <div className="shrink-0 aspect-[4/3] bg-surface-dim rounded-lg overflow-hidden relative flex items-center justify-center border border-dashed border-outline-variant">
             <div className={`z-10 text-center transition-opacity duration-500 ${feedLoaded && !feedError ? 'opacity-0' : 'opacity-100'}`}>
               <span className="material-symbols-outlined text-5xl text-outline-variant mb-2">linked_camera</span>
-              <p className="text-on-surface-variant">Camera Feed Offline</p>
+              <p className="text-on-surface-variant">
+                {feedUnavailable ? "Camera Feed Unavailable" : "Camera Feed Offline"}
+              </p>
               <p className="text-sm text-slate-body mt-1">Connect device to begin</p>
             </div>
             <img
