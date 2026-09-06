@@ -55,7 +55,7 @@ const Dashboard = () => {
               <span className="w-2 h-2 rounded-full bg-success inline-block" /> Live
             </span>
           </div>
-          <div className="grow shrink-0 md:flex-1 aspect-[4/3] md:aspect-auto bg-surface-dim rounded-lg overflow-hidden relative flex items-center justify-center border border-dashed border-outline-variant">
+          <div className="shrink-0 aspect-[4/3] bg-surface-dim rounded-lg overflow-hidden relative flex items-center justify-center border border-dashed border-outline-variant">
             <div className={`z-10 text-center transition-opacity duration-500 ${feedLoaded && !feedError ? 'opacity-0' : 'opacity-100'}`}>
               <span className="material-symbols-outlined text-5xl text-outline-variant mb-2">linked_camera</span>
               <p className="text-on-surface-variant">Camera Feed Offline</p>
