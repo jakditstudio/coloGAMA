@@ -48,14 +48,14 @@ const Dashboard = () => {
     <div className="flex-1 p-margin-mobile md:p-margin-desktop flex flex-col items-center justify-center gap-gutter">
       <div className="w-full max-w-4xl flex flex-col md:flex-row gap-gutter">
         {/* Camera Preview */}
-        <div className="grow shrink-0 bg-pure-white rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.12)] p-4 border border-border flex flex-col relative aspect-[4/3] md:aspect-auto md:min-h-[500px]">
+        <div className="grow shrink-0 bg-pure-white rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.12)] p-4 border border-border flex flex-col relative md:min-h-[500px]">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-slate-heading">Live Feed</h2>
             <span className="bg-surface-container text-primary text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-success inline-block" /> Live
             </span>
           </div>
-          <div className="flex-1 bg-surface-dim rounded-lg overflow-hidden relative flex items-center justify-center border border-dashed border-outline-variant">
+          <div className="grow shrink-0 md:flex-1 aspect-[4/3] md:aspect-auto bg-surface-dim rounded-lg overflow-hidden relative flex items-center justify-center border border-dashed border-outline-variant">
             <div className={`z-10 text-center transition-opacity duration-500 ${feedLoaded && !feedError ? 'opacity-0' : 'opacity-100'}`}>
               <span className="material-symbols-outlined text-5xl text-outline-variant mb-2">linked_camera</span>
               <p className="text-on-surface-variant">Camera Feed Offline</p>
