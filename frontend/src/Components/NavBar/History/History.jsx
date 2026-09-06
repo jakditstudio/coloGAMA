@@ -229,7 +229,7 @@ const History = () => {
                       {item.type}
                     </span>
                   </td>
-                  <td className="p-4 text-on-surface">{item.name}</td>
+                  <td className="p-4 text-on-surface max-w-40 truncate">{item.name}</td>
                   <td className="p-4 text-slate-body">{formatDate(item.timestamp)}</td>
                   <td className="p-4 flex gap-2">
                     <button
