@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 // import logo from "../../assets/logo.png";
 
@@ -8,30 +8,36 @@ const navItems = [
   { to: "/history", icon: "history", label: "History" },
 ];
 
-const linkClasses = ({ isActive }) =>
-  `flex items-center gap-3 px-4 py-3 rounded-lg min-h-11 transition-colors ${
+const linkClasses = (collapsed) => ({ isActive }) =>
+  `flex items-center gap-3 rounded-lg min-h-11 transition-colors ${
+    collapsed ? "justify-center px-2 py-3" : "px-4 py-3"
+  } ${
     isActive
       ? "bg-primary-container text-white"
       : "text-slate-body hover:bg-secondary/40"
   }`;
 
-const SideNav = () => (
-  <>
-    {/* Desktop sidebar */}
-    <aside className="hidden md:flex flex-col w-56 shrink-0 bg-surface-dim border-r border-border h-screen sticky top-0 p-4">
-      {/* <img src={logo} alt="coloGAMA" className="h-10 mb-8 px-2" /> */}
-      <Link to="/" className="text-2xl font-semibold text-primary tracking-tight mb-8 px-2">
-        <span className="text-primary-container">colo</span>GAMA
-      </Link>
-      <nav className="flex flex-col gap-1">
-        {navItems.map((item) => (
-          <NavLink key={item.to} to={item.to} className={linkClasses} end={item.to === "/"}>
-            <span className="material-symbols-outlined">{item.icon}</span>
-            <span className="font-medium">{item.label}</span>
-          </NavLink>
-        ))}
-      </nav>
-    </aside>
+const SideNav = () => {
+  const location = useLocation();
+  const collapsed = location.pathname === "/dashboard";
+
+  return (
+    <>
+      {/* Desktop sidebar — collapses to an icon-only rail on the Dashboard to free up width for the live feed */}
+      <aside className={`hidden md:flex flex-col shrink-0 bg-surface-dim border-r border-border h-screen sticky top-0 p-4 transition-all duration-300 ${collapsed ? "w-20" : "w-56"}`}>
+        {/* <img src={logo} alt="coloGAMA" className="h-10 mb-8 px-2" /> */}
+        <Link to="/" className="text-2xl font-semibold text-primary tracking-tight mb-8 px-2 text-center" title="coloGAMA">
+          {collapsed ? <span className="text-primary-container">c</span> : (<><span className="text-primary-container">colo</span>GAMA</>)}
+        </Link>
+        <nav className="flex flex-col gap-1">
+          {navItems.map((item) => (
+            <NavLink key={item.to} to={item.to} className={linkClasses(collapsed)} end={item.to === "/"} title={item.label}>
+              <span className="material-symbols-outlined">{item.icon}</span>
+              {!collapsed && <span className="font-medium">{item.label}</span>}
+            </NavLink>
+          ))}
+        </nav>
+      </aside>
 
     {/* Mobile/touch bottom nav */}
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border flex justify-around py-2 z-20">
@@ -51,7 +57,8 @@ const SideNav = () => (
         </NavLink>
       ))}
     </nav>
-  </>
-);
+    </>
+  );
+};
 
 export default SideNav;
