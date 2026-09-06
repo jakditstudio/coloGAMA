@@ -14,7 +14,7 @@ const Hero = () => {
           <img src={heroImage} alt="" className="w-full h-full object-cover opacity-80" />
           <div className="absolute inset-0 hero-gradient" />
         </div>
-        <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto mt-20">
+        <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto mt-20 pb-16">
           <h1 className="text-5xl md:text-6xl font-bold text-pure-white mb-6 drop-shadow-lg">
             Explore Your Color
           </h1>
