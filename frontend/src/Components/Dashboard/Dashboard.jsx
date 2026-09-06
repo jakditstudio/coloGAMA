@@ -48,7 +48,7 @@ const Dashboard = () => {
     <div className="flex-1 p-margin-mobile md:p-margin-desktop flex flex-col items-center justify-center gap-gutter">
       <div className="w-full max-w-4xl flex flex-col md:flex-row gap-gutter">
         {/* Camera Preview */}
-        <div className="flex-1 bg-pure-white rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.12)] p-4 border border-border flex flex-col relative aspect-[4/3] md:aspect-auto md:min-h-[500px]">
+        <div className="grow shrink-0 bg-pure-white rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.12)] p-4 border border-border flex flex-col relative aspect-[4/3] md:aspect-auto md:min-h-[500px]">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-slate-heading">Live Feed</h2>
             <span className="bg-surface-container text-primary text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1">
