@@ -38,17 +38,20 @@ for directory in [MAIN_OUTPUT_DIR, IMAGE_DIR, HISTOGRAM_DIR, PDF_DIR]:
 def video_stream():
     ''' Endpoint for video streaming '''
     streaming_output = StreamingOutput()  # Initialize streaming output
-    picam2, stop_event = live_feed.start_feed(streaming_output)  # Start the live feed
+    picam2, stop_event, stop_confirmed = live_feed.start_feed(streaming_output)  # Start the live feed
     return StreamingResponse(
-            live_feed.generate_frames(picam2, streaming_output, stop_event),
+            live_feed.generate_frames(picam2, streaming_output, stop_event, stop_confirmed),
             media_type="multipart/x-mixed-replace; boundary=FRAME"
         )
 
 @router.post("/stream/stop")
 def stop_stream():
     ''' Signals the currently running live feed session to stop '''
-    if live_feed.current_stop_event:
-        live_feed.current_stop_event.set()
+    stop_event = live_feed.current_stop_event
+    stop_confirmed = live_feed.current_stop_confirmed
+    if stop_event:
+        stop_event.set()
+        stop_confirmed.wait(timeout=10.0)  # Wait for the current feed to confirm it has stopped
     return {"message": "Stop signal sent."}
 
 @router.get("/")

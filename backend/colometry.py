@@ -38,8 +38,9 @@ def process_colometry():
     captures_data = []
 
     # Initialize Neopixel LED
+    LED_COLOR = (255, 255, 200)
     pixels1 = neopixel.NeoPixel(board.D18, 7, brightness=1)
-    pixels1.fill((255, 255, 200))  # Set initial color
+    pixels1.fill(LED_COLOR)  # Set initial color
 
     # Initialize Picamera2
     picam2 = open_camera()

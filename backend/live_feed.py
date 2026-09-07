@@ -44,12 +44,15 @@ class liveFeedParams:
         self.PREVIEW_BRIGHTNESS = 0.5  # Set brightness for preview
         self.pixels1 = neopixel.NeoPixel(board.D18, 7, brightness=self.PREVIEW_BRIGHTNESS)
         self.current_stop_event = None
+        self.current_stop_confirmed = None
         # self.picam2 = None  
         
     def start_feed(self, output):
         if self.current_stop_event:
             self.current_stop_event.set()  # Signal the previous feed to stop
         stop_event = threading.Event()
+        stop_confirmed = threading.Event()
+        self.current_stop_confirmed = stop_confirmed  # Store the current stop confirmed event
         self.current_stop_event = stop_event  # Store the current stop event
 
         # self.stop_feed()  
@@ -61,7 +64,7 @@ class liveFeedParams:
         picam2.configure(self.camera_config)
         picam2.set_controls({"AfMode": controls.AfModeEnum.Manual, "LensPosition": 11.})
         picam2.start_recording(JpegEncoder(), FileOutput(output))
-        return picam2, stop_event
+        return picam2, stop_event, stop_confirmed
         
 
     def stop_feed(self, picam2):
@@ -80,7 +83,7 @@ class liveFeedParams:
         except Exception as e:
             pass
 
-    def generate_frames(self, picam2, output, stop_event):
+    def generate_frames(self, picam2, output, stop_event, stop_confirmed):
         logging.info("Generating frames for streaming...")
         logging.warning(f"[generate frames] started thread={threading.current_thread().name}")
         try:
@@ -100,3 +103,4 @@ class liveFeedParams:
         finally:
             logging.info("Stopping live feed thread=%s...", threading.current_thread().name)
             self.stop_feed(picam2)  # Ensure the feed is stopped when the generator is done       
+            stop_confirmed.set()  # Signal that the feed has stopped

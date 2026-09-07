@@ -91,31 +91,146 @@ Use a `threading.Event()` that the running generator checks periodically instead
 
 This is the mechanical fix for the original bug, generalized: **capture a shared reference once, into a local, and never re-read the shared attribute again.** `self.picam2.close()` broke this rule (re-read at cleanup time, arbitrarily later); the new pattern doesn't.
 
+Actual current code, `live_feed.py` in full (the `stop_confirmed` pieces belong to the NeoPixel fix — see the companion doc — shown here too since they live in the same functions):
+
 ```python
-# inside liveFeedParams
-self.current_stop_event = None
+import board
+import neopixel
+import io
+import logging
+from threading import Condition
+import threading
+import time
 
-def start_feed(self, output):
-    if self.current_stop_event:
-        self.current_stop_event.set()
-    stop_event = threading.Event()
-    self.current_stop_event = stop_event
-    picam2 = Picamera2()
+from libcamera import controls
+from libcamera import Transform
+from picamera2 import Picamera2
+from picamera2.encoders import JpegEncoder
+from picamera2.outputs import FileOutput
+
+
+def open_camera(retries=5, delay=2.0):
+    """Opens the camera and returns a Picamera2 instance."""
+    for _ in range(retries):
+        try:
+            picam2 = Picamera2()
+            logging.info("Camera opened.")
+            return picam2
+        except Exception as e:
+            logging.warning(f"Failed to open camera: {e}")
+            time.sleep(delay)
+    raise RuntimeError("Failed to open camera after multiple attempts.")
+
+class StreamingOutput(io.BufferedIOBase):
+    def __init__(self):
+        self.frame = None
+        self.condition = Condition()
+
+    def write(self, buf):
+        with self.condition:
+            self.frame = buf
+            self.condition.notify_all()
+
+class liveFeedParams:
+    def __init__(self):
+        self.PREVIEW_LED_COLOR = (255, 255, 200)
+        self.PREVIEW_BRIGHTNESS = 0.5
+        self.pixels1 = neopixel.NeoPixel(board.D18, 7, brightness=self.PREVIEW_BRIGHTNESS)
+        self.current_stop_event = None
+        self.current_stop_confirmed = None
+
+    def start_feed(self, output):
+        if self.current_stop_event:
+            self.current_stop_event.set()  # <-- STOP EVENT (this doc): tell the PREVIOUS session's loop to exit
+        stop_event = threading.Event()             # <-- STOP EVENT: fresh signal, one per session
+        stop_confirmed = threading.Event()          # (NeoPixel doc's concern, not this one)
+        self.current_stop_confirmed = stop_confirmed
+        self.current_stop_event = stop_event        # <-- STOP EVENT: stored in the shared slot — safe only because
+                                                      #     generate_frames() below never re-reads this slot, it uses
+                                                      #     the captured parameter instead
+
+        picam2 = open_camera()
+        self.pixels1.fill(self.PREVIEW_LED_COLOR)
+        self.camera_config = picam2.create_video_configuration(main={"size": (640, 480)}, transform=Transform(vflip=1))
+        picam2.configure(self.camera_config)
+        picam2.set_controls({"AfMode": controls.AfModeEnum.Manual, "LensPosition": 11.})
+        picam2.start_recording(JpegEncoder(), FileOutput(output))
+        return picam2, stop_event, stop_confirmed    # <-- STOP EVENT: handed out as a value, not left in self.
+
+    def stop_feed(self, picam2):
+        try:
+            picam2.stop_recording()
+        except Exception:
+            pass
+        try:
+            picam2.close()
+        except Exception:
+            pass
+        try:
+            self.pixels1.fill((0, 0, 0))
+        except Exception:
+            pass
+
+    def generate_frames(self, picam2, output, stop_event, stop_confirmed):
+        # ^ stop_event here is STOP EVENT: the captured parameter, NEVER self.current_stop_event
+        try:
+            while not stop_event.is_set():  # <-- STOP EVENT: the actual check that ends the loop
+                with output.condition:
+                    got_frame = output.condition.wait(timeout=1.0)
+                    if not got_frame:
+                        continue
+                    frame = output.frame
+                yield (b'--FRAME\r\n'
+                       b'Content-Type: image/jpeg\r\n'
+                       b'Content-Length: ' + str(len(frame)).encode() + b'\r\n\r\n'
+                       + frame + b'\r\n')
+        except Exception as e:
+            logging.warning('Removed streaming client: %s', str(e))
+        finally:
+            self.stop_feed(picam2)   # local picam2, never self.picam2
+            stop_confirmed.set()     # local reference, never self.current_stop_confirmed
+```
+
+Corresponding `main.py` routes:
+
+```python
+app = FastAPI()
+live_feed = liveFeedParams()
+
+@router.get("/stream")
+def video_stream():
+    streaming_output = StreamingOutput()   # fresh per request, never module-level shared
+    picam2, stop_event, stop_confirmed = live_feed.start_feed(streaming_output)
+    return StreamingResponse(
+        live_feed.generate_frames(picam2, streaming_output, stop_event, stop_confirmed),
+        media_type="multipart/x-mixed-replace; boundary=FRAME"
+    )
+
+@router.post("/stream/stop")
+def stop_stream():
+    stop_event = live_feed.current_stop_event   # <-- STOP EVENT: local capture, read from the shared slot once
+    stop_confirmed = live_feed.current_stop_confirmed
+    if stop_event:
+        stop_event.set()   # <-- STOP EVENT: this is what generate_frames()'s while-loop is watching for
+        stop_confirmed.wait(timeout=10.0)
+    return {"message": "Stop signal sent."}
+
+@router.post("/capture")
+def run_colometry():
+    stop_stream()  # blocks until the old session's camera + LED cleanup is confirmed, or times out
+    result = process_colometry()
     ...
-    return picam2, stop_event
+```
 
-def generate_frames(self, picam2, output, stop_event):
-    try:
-        while not stop_event.is_set():
-            with output.condition:
-                got_frame = output.condition.wait(timeout=1.0)
-                if not got_frame:
-                    continue
-                frame = output.frame
-            yield (...)
-    finally:
-        # local cleanup of picam2, never self.picam2
-        ...
+And `colometry.py`'s camera acquisition, updated to use the same retry-protected helper:
+
+```python
+from live_feed import open_camera
+
+def process_colometry():
+    ...
+    picam2 = open_camera()  # retries if it races the preview session's not-yet-finished cleanup
+    ...
 ```
 
 ### 4. Busy-camera guard (retry with backoff)
@@ -141,6 +256,10 @@ Implemented across `live_feed.py`, `main.py`, `colometry.py`, `api.js`, and `Das
 - `main.py`: `streaming_output` no longer module-level, created fresh per `/api/stream` request; new `POST /api/stream/stop` route sends the stop signal; `run_colometry()` calls `stop_stream()` instead of touching any camera object directly.
 - `colometry.py`: uses `open_camera()` instead of a raw `Picamera2()` call, so it retries if it races the preview session's not-yet-finished cleanup.
 - `api.js` / `Dashboard.jsx`: new `stopFeed()` helper; `useEffect` cleanup calls it on unmount, so navigating away from the Dashboard without capturing still releases the camera and turns off the preview LED.
+
+## NeoPixel LED race (post-deploy finding, functional testing)
+
+Same family as the camera race above — a delayed cleanup from an old session reaching in after a new session already claimed something — but a different mechanism (last-write-wins on shared hardware, not a resource-acquisition failure) and a different fix (wait-for-confirmation handshake, not retry-on-failure). Full writeup, root cause, and step-by-step sequence moved to its own doc: [live-camera-feed-neopixel-lifecycle-fix.md](live-camera-feed-neopixel-lifecycle-fix.md).
 
 ## Retry budget tuning (post-deploy finding)
 
