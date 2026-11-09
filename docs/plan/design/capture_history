@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>History - coloGAMA</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#d2bbff",
+                        "surface-container": "#f3ebfa",
+                        "on-surface-variant": "#4a4455",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "chart-blue": "#3B82F6",
+                        "on-primary-container": "#ede0ff",
+                        "on-background": "#1d1a24",
+                        "on-tertiary-fixed": "#301400",
+                        "inverse-primary": "#d2bbff",
+                        "surface": "#fef7ff",
+                        "on-secondary-container": "#606368",
+                        "on-secondary-fixed-variant": "#44474c",
+                        "slate-heading": "#1E293B",
+                        "primary-container": "#7c3aed",
+                        "chart-green": "#22C55E",
+                        "slate-body": "#64748B",
+                        "on-error-container": "#93000a",
+                        "outline": "#7b7487",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "tertiary-fixed": "#ffdcc6",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "background": "#fef7ff",
+                        "surface-container-low": "#f9f1ff",
+                        "success-emerald": "#10B981",
+                        "warning-amber": "#F59E0B",
+                        "secondary-fixed-dim": "#c5c6cc",
+                        "outline-variant": "#ccc3d8",
+                        "tertiary-container": "#a15100",
+                        "primary-fixed": "#eaddff",
+                        "inverse-surface": "#332f39",
+                        "surface-dim": "#dfd7e6",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#e1e2e8",
+                        "inverse-on-surface": "#f6eefc",
+                        "primary": "#630ed4",
+                        "on-surface": "#1d1a24",
+                        "chart-red": "#EF4444",
+                        "secondary-container": "#dedfe5",
+                        "tertiary": "#7d3d00",
+                        "secondary": "#5c5e63",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "on-primary-fixed": "#25005a",
+                        "on-tertiary-container": "#ffe0cd",
+                        "surface-container-highest": "#e8dfee",
+                        "surface-variant": "#e8dfee",
+                        "pure-white": "#FFFFFF",
+                        "on-secondary-fixed": "#191c20",
+                        "surface-tint": "#732ee4",
+                        "surface-bright": "#fef7ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#ede5f4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #F8F9FF; /* Lilac-white background as per style guide */
+        }
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.12);
+        }
+        .table-row-hover:hover {
+            background-color: #f3ebfa; /* surface-container */
+            transition: background-color 0.2s ease;
+        }
+        .color-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+        }
+        .color-swatch {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-md antialiased overflow-hidden flex h-screen">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden lg:flex flex-col h-screen p-6 gap-8 border-r border-outline-variant bg-surface-container-lowest dark:bg-surface-dim fixed left-0 w-64 z-40">
+<!-- Brand -->
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="science" style="font-variation-settings: 'FILL' 1;">science</span>
+<div>
+<h1 class="text-headline-md font-headline-md text-primary tracking-tight">coloGAMA</h1>
+<p class="font-label-sm text-label-sm text-slate-body">Lab Precision System</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full bg-primary-container text-on-primary-container font-label-lg text-label-lg py-3 rounded-lg shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-xl" data-icon="add">add</span>
+            Start New Analysis
+        </button>
+<!-- Main Nav -->
+<div class="flex-1 flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="photo_camera">photo_camera</span>
+<span class="font-body-md text-body-md">Capture</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Results</span>
+</a>
+<!-- Active State for History -->
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 font-semibold transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-body-md text-body-md">History</span>
+</a>
+</div>
+<!-- Footer Nav -->
+<div class="flex flex-col gap-2 border-t border-outline-variant pt-6 mt-auto">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar (Mobile) - Hidden on LG -->
+<header class="lg:hidden flex justify-between items-center px-margin-mobile h-16 w-full z-50 bg-pure-white dark:bg-surface-container-highest shadow-sm fixed top-0 left-0 right-0">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="science" style="font-variation-settings: 'FILL' 1;">science</span>
+<span class="text-headline-md font-headline-md text-primary dark:text-primary-fixed-dim">coloGAMA</span>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors duration-200" data-icon="videocam">videocam</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors duration-200" data-icon="lightbulb">lightbulb</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors duration-200" data-icon="settings">settings</span>
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-outline-variant object-cover cursor-pointer active:scale-95 transition-transform" data-alt="A small, circular profile picture of a scientist wearing a lab coat in a brightly lit modern laboratory setting. The image is clean, professional, and slightly desaturated to match a clinical aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6ig10f_kqqmbH7MvPtEQxJLA73PcAwJlNNW-16CqIvOsKpStyVb8Ch9UmXjP3qWS9M_UtHlVr0EN69oP3POFN0howmc41V_FbHYnGjUCcWjCc6UyT9BvYbWx3fkXDXp3xzZvkt7NVEdWjn0jkex_5G--UWeixq73qa0z3WHzsIgOy5tuCna7X7ecdm7CLjrL2OYxciJavpVls9kY6NYJnLJ7X8FokpCMe-7g1DcyYNS_HsXGpnSpY"/>
+</div>
+</header>
+<!-- Mobile Bottom Navigation Shell (Only visible md:hidden) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-pure-white shadow-[0px_-4px_10px_rgba(0,0,0,0.05)] z-50 flex justify-around items-center px-4">
+<a class="flex flex-col items-center justify-center w-16 text-secondary hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl mb-1" data-icon="photo_camera">photo_camera</span>
+<span class="font-label-sm text-[10px]">Capture</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 text-secondary hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl mb-1" data-icon="analytics">analytics</span>
+<span class="font-label-sm text-[10px]">Results</span>
+</a>
+<!-- Active Mobile Nav -->
+<a class="flex flex-col items-center justify-center w-16 text-primary" href="#">
+<div class="px-4 py-1 bg-primary-fixed rounded-full mb-1">
+<span class="material-symbols-outlined text-xl" data-icon="history" style="font-variation-settings: 'FILL' 1;">history</span>
+</div>
+<span class="font-label-sm text-[10px] font-bold">History</span>
+</a>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-1 ml-0 lg:ml-64 pt-16 lg:pt-0 overflow-y-auto h-full p-margin-mobile md:p-gutter lg:p-margin-desktop bg-[#F8F9FF] pb-24 lg:pb-margin-desktop">
+<div class="max-w-container-max mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 mt-4 lg:mt-0">
+<div>
+<h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg text-slate-heading mb-2">Analysis History</h2>
+<p class="font-body-md text-body-md text-slate-body">Review past colorimetric captures, download reports, and access raw histogram data.</p>
+</div>
+<!-- Quick Search -->
+<div class="relative w-full md:w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-pure-white border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" placeholder="Search by ID or Date..." type="text"/>
+</div>
+</div>
+<!-- Filters & Controls Bar -->
+<div class="glass-card rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-2">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider mr-2">Filter By:</span>
+<!-- Filter Chips -->
+<button class="px-4 py-1.5 rounded-full border border-primary-container bg-primary-fixed text-primary-container font-label-lg text-label-lg flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="check" style="font-variation-settings: 'FILL' 1;">check</span>
+                        All Records
+                    </button>
+<button class="px-4 py-1.5 rounded-full border border-outline-variant bg-pure-white text-secondary hover:bg-surface-container font-label-lg text-label-lg transition-colors">
+                        PDFs
+                    </button>
+<button class="px-4 py-1.5 rounded-full border border-outline-variant bg-pure-white text-secondary hover:bg-surface-container font-label-lg text-label-lg transition-colors">
+                        Images
+                    </button>
+<button class="px-4 py-1.5 rounded-full border border-outline-variant bg-pure-white text-secondary hover:bg-surface-container font-label-lg text-label-lg transition-colors">
+                        Histograms
+                    </button>
+</div>
+<div class="flex items-center gap-3 w-full sm:w-auto border-t sm:border-t-0 border-outline-variant pt-4 sm:pt-0 mt-2 sm:mt-0">
+<span class="font-label-sm text-label-sm text-secondary">Sort:</span>
+<select class="bg-pure-white border border-outline-variant rounded-md px-3 py-1.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary cursor-pointer shadow-sm">
+<option>Newest First</option>
+<option>Oldest First</option>
+<option>ID (A-Z)</option>
+</select>
+</div>
+</div>
+<!-- Data Table Container (Glassmorphism Card) -->
+<div class="glass-card rounded-xl overflow-hidden border border-outline-variant/50">
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="font-label-lg text-label-lg text-slate-heading px-6 py-4 font-semibold w-16 text-center">Thumb</th>
+<th class="font-label-lg text-label-lg text-slate-heading px-6 py-4 font-semibold">Analysis ID</th>
+<th class="font-label-lg text-label-lg text-slate-heading px-6 py-4 font-semibold">Date &amp; Time</th>
+<th class="font-label-lg text-label-lg text-slate-heading px-6 py-4 font-semibold">Primary RGB Result</th>
+<th class="font-label-lg text-label-lg text-slate-heading px-6 py-4 font-semibold">Available Assets</th>
+<th class="font-label-lg text-label-lg text-slate-heading px-6 py-4 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/60">
+<!-- Row 1 -->
+<tr class="table-row-hover bg-pure-white group">
+<td class="px-6 py-4">
+<img alt="Sample thumbnail" class="w-12 h-12 rounded-md object-cover border border-outline-variant shadow-sm" data-alt="A macro close up photograph of a small glass vial containing a bright, clear blue liquid chemical solution. The lighting is sterile and medical, resting on a clean white laboratory surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAuCdhpufmqG7BNyALn6OSb6f2MD6EqWnWEjD_arXU2jYshj_PxLXTi22LjIe-lbI8gWuyatmxsvq4L1JQx0Km_6Wh5hsGA8CD8XVG0ujAuwHlXnHhqY3qhznHSbW5B96h1Rut-dUGeX-ww0gUA1aU1P0PZfGZpAsEFkwMjiHYw14aBrLQYpdO1Vmpg2a2DyFK0brBqbx5pZtl1kwQXBhe1xiZDfr86JyRarUBdLTCM2VaBB-buyvk"/>
+</td>
+<td class="px-6 py-4">
+<div class="font-body-md text-body-md text-on-surface font-medium">ANL-2023-104</div>
+<div class="font-label-sm text-label-sm text-slate-body">Water Purity Test</div>
+</td>
+<td class="px-6 py-4">
+<div class="font-body-md text-body-md text-on-surface">Oct 24, 2023</div>
+<div class="font-label-sm text-label-sm text-slate-body">14:32:05 EST</div>
+</td>
+<td class="px-6 py-4">
+<div class="color-chip">
+<div class="color-swatch" style="background-color: rgb(34, 197, 94);"></div> <!-- chart-green -->
+<span class="font-label-sm text-label-sm font-mono text-slate-heading">RGB(34, 197, 94)</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2 text-secondary">
+<span class="material-symbols-outlined text-[20px]" data-icon="picture_as_pdf" title="PDF Available">picture_as_pdf</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="image" title="Image Available">image</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="bar_chart" title="Histogram Available">bar_chart</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-secondary hover:text-primary bg-transparent hover:bg-primary-fixed rounded-md transition-colors" title="View Details">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 text-secondary hover:text-primary bg-transparent hover:bg-primary-fixed rounded-md transition-colors" title="Download ZIP">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="table-row-hover bg-pure-white group">
+<td class="px-6 py-4">
+<div class="w-12 h-12 rounded-md bg-surface-variant flex items-center justify-center border border-outline-variant shadow-sm text-outline">
+<span class="material-symbols-outlined" data-icon="hide_image">hide_image</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="font-body-md text-body-md text-on-surface font-medium">ANL-2023-103</div>
+<div class="font-label-sm text-label-sm text-slate-body">Soil pH Extract</div>
+</td>
+<td class="px-6 py-4">
+<div class="font-body-md text-body-md text-on-surface">Oct 23, 2023</div>
+<div class="font-label-sm text-label-sm text-slate-body">09:15:22 EST</div>
+</td>
+<td class="px-6 py-4">
+<div class="color-chip">
+<div class="color-swatch" style="background-color: rgb(239, 68, 68);"></div> <!-- chart-red -->
+<span class="font-label-sm text-label-sm font-mono text-slate-heading">RGB(239, 68, 68)</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2 text-secondary">
+<span class="material-symbols-outlined text-[20px]" data-icon="picture_as_pdf" title="PDF Available">picture_as_pdf</span>
+<span class="material-symbols-outlined text-[20px] opacity-30" data-icon="image" title="Image Unavailable">image</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="bar_chart" title="Histogram Available">bar_chart</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-secondary hover:text-primary bg-transparent hover:bg-primary-fixed rounded-md transition-colors" title="View Details">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 text-secondary hover:text-primary bg-transparent hover:bg-primary-fixed rounded-md transition-colors" title="Download ZIP">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="table-row-hover bg-pure-white group">
+<td class="px-6 py-4">
+<img alt="Sample thumbnail" class="w-12 h-12 rounded-md object-cover border border-outline-variant shadow-sm" data-alt="A highly detailed close-up of a petri dish containing a light amber colored liquid culture, illuminated from below against a stark white lab bench context, conveying a sense of sterile scientific investigation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWZXga-K7K6HePpROICFlvCRQ5shiMkARKQ9UB0H0y40dvCA_-LpH7cf2VtO9TgsS8K3TYZtIkxa2oEBD48mB33aTRyuF0AuapJvdB5JEzpHV39KJLu3oVElhvppzDgjn3uWb3XYYc6IyUai4lLSAs1unTbPL5zf1ELQTZ_NtaB6cfSWJ7SpP8T4NCW07JjohkVlk656-mfA18QU9FiHax_ESkh2MHmAOJwf9c3FpOSWXYGtk15oxz"/>
+</td>
+<td class="px-6 py-4">
+<div class="font-body-md text-body-md text-on-surface font-medium">ANL-2023-102</div>
+<div class="font-label-sm text-label-sm text-slate-body">Reagent Control A</div>
+</td>
+<td class="px-6 py-4">
+<div class="font-body-md text-body-md text-on-surface">Oct 21, 2023</div>
+<div class="font-label-sm text-label-sm text-slate-body">16:45:00 EST</div>
+</td>
+<td class="px-6 py-4">
+<div class="color-chip">
+<div class="color-swatch" style="background-color: rgb(245, 158, 11);"></div> <!-- warning-amber -->
+<span class="font-label-sm text-label-sm font-mono text-slate-heading">RGB(245, 158, 11)</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2 text-secondary">
+<span class="material-symbols-outlined text-[20px] opacity-30" data-icon="picture_as_pdf" title="PDF Unavailable">picture_as_pdf</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="image" title="Image Available">image</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="bar_chart" title="Histogram Available">bar_chart</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-secondary hover:text-primary bg-transparent hover:bg-primary-fixed rounded-md transition-colors" title="View Details">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 text-secondary hover:text-primary bg-transparent hover:bg-primary-fixed rounded-md transition-colors" title="Download ZIP">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="bg-surface-container-low border-t border-outline-variant px-6 py-4 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary">Showing 1 to 3 of 124 records</span>
+<div class="flex gap-1">
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center text-secondary hover:bg-surface-container transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[20px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded border border-primary bg-primary-fixed text-primary-container font-label-sm flex items-center justify-center">1</button>
+<button class="w-8 h-8 rounded border border-outline-variant bg-pure-white hover:bg-surface-container text-secondary font-label-sm flex items-center justify-center transition-colors">2</button>
+<button class="w-8 h-8 rounded border border-outline-variant bg-pure-white hover:bg-surface-container text-secondary font-label-sm flex items-center justify-center transition-colors">3</button>
+<span class="w-8 h-8 flex items-center justify-center text-secondary font-label-sm">...</span>
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center text-secondary hover:bg-surface-container transition-colors bg-pure-white">
+<span class="material-symbols-outlined text-[20px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

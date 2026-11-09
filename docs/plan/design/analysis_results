@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>coloGAMA - Results Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "primary-fixed-dim": "#d2bbff",
+                            "surface-container": "#f3ebfa",
+                            "on-surface-variant": "#4a4455",
+                            "on-error": "#ffffff",
+                            "on-tertiary": "#ffffff",
+                            "chart-blue": "#3B82F6",
+                            "on-primary-container": "#ede0ff",
+                            "on-background": "#1d1a24",
+                            "on-tertiary-fixed": "#301400",
+                            "inverse-primary": "#d2bbff",
+                            "surface": "#fef7ff",
+                            "on-secondary-container": "#606368",
+                            "on-secondary-fixed-variant": "#44474c",
+                            "slate-heading": "#1E293B",
+                            "primary-container": "#7c3aed",
+                            "chart-green": "#22C55E",
+                            "slate-body": "#64748B",
+                            "on-error-container": "#93000a",
+                            "outline": "#7b7487",
+                            "on-primary": "#ffffff",
+                            "tertiary-fixed-dim": "#ffb784",
+                            "tertiary-fixed": "#ffdcc6",
+                            "on-tertiary-fixed-variant": "#713700",
+                            "background": "#fef7ff",
+                            "surface-container-low": "#f9f1ff",
+                            "success-emerald": "#10B981",
+                            "warning-amber": "#F59E0B",
+                            "secondary-fixed-dim": "#c5c6cc",
+                            "outline-variant": "#ccc3d8",
+                            "tertiary-container": "#a15100",
+                            "primary-fixed": "#eaddff",
+                            "inverse-surface": "#332f39",
+                            "surface-dim": "#dfd7e6",
+                            "on-secondary": "#ffffff",
+                            "surface-container-lowest": "#ffffff",
+                            "secondary-fixed": "#e1e2e8",
+                            "inverse-on-surface": "#f6eefc",
+                            "primary": "#630ed4",
+                            "on-surface": "#1d1a24",
+                            "chart-red": "#EF4444",
+                            "secondary-container": "#dedfe5",
+                            "tertiary": "#7d3d00",
+                            "secondary": "#5c5e63",
+                            "error": "#ba1a1a",
+                            "on-primary-fixed-variant": "#5a00c6",
+                            "on-primary-fixed": "#25005a",
+                            "on-tertiary-container": "#ffe0cd",
+                            "surface-container-highest": "#e8dfee",
+                            "surface-variant": "#e8dfee",
+                            "pure-white": "#FFFFFF",
+                            "on-secondary-fixed": "#191c20",
+                            "surface-tint": "#732ee4",
+                            "surface-bright": "#fef7ff",
+                            "error-container": "#ffdad6",
+                            "surface-container-high": "#ede5f4"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "margin-mobile": "16px",
+                            "unit": "4px",
+                            "gutter": "24px",
+                            "container-max": "1280px",
+                            "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                            "body-md": ["Inter"],
+                            "display-lg": ["Inter"],
+                            "headline-md": ["Inter"],
+                            "headline-lg": ["Inter"],
+                            "body-lg": ["Inter"],
+                            "label-sm": ["Inter"],
+                            "label-lg": ["Inter"],
+                            "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                            "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                            "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                            "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                            "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #F8F9FF; /* Lilac-white base layer */
+            color: #1d1a24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .data-card {
+            background-color: #FFFFFF;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); /* Soft ambient shadow */
+            border-radius: 0.5rem;
+            border: 1px solid #E2E8F0;
+        }
+        .histogram-bar {
+            transition: height 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md text-on-background min-h-screen flex flex-col md:flex-row">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden lg:flex flex-col h-screen p-6 gap-8 border-r border-outline-variant bg-surface-container-lowest fixed left-0 w-64 z-40">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">science</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md text-primary tracking-tight">coloGAMA</h1>
+<p class="font-label-sm text-label-sm text-secondary">Lab Precision System</p>
+</div>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-label-lg text-label-lg py-3 rounded-lg flex justify-center items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+            Start New Analysis
+        </button>
+<div class="flex flex-col gap-2 flex-grow mt-4">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">photo_camera</span>
+                Capture
+            </a>
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 font-semibold font-label-lg text-label-lg opacity-80 scale-[0.98] transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                Results
+            </a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">history</span>
+                History
+            </a>
+</div>
+<div class="flex flex-col gap-2 mt-auto">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</div>
+</nav>
+<!-- TopNavBar (Mobile/Tablet & Desktop Top Header) -->
+<div class="flex-grow flex flex-col lg:ml-64 w-full">
+<header class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full z-30 bg-pure-white shadow-[0px_4px_10px_rgba(0,0,0,0.12)] lg:shadow-none lg:border-b lg:border-outline-variant sticky top-0">
+<div class="flex items-center lg:hidden">
+<h1 class="text-headline-md font-headline-md text-primary">coloGAMA</h1>
+</div>
+<div class="hidden lg:flex items-center">
+<h2 class="font-headline-md text-headline-md text-slate-heading">Analysis Results</h2>
+</div>
+<div class="flex items-center gap-4 text-primary">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors duration-200">videocam</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors duration-200">lightbulb</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors duration-200">settings</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden cursor-pointer active:scale-95 transition-transform border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A clean, professional headshot of a laboratory technician wearing a white coat, isolated on a bright white background. The lighting is sterile and high-key, emphasizing a clinical and modern aesthetic consistent with medical or scientific UI profiles." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBESeCZm6uTEI7AplEaLM-cIsK6rtqkdVhccBAqEYpRSTMq7PhxUMKmWnVmahQW4QkY4ilS8qqbgdNxHb7bSDKtOQ77Kp8AnVUQYF7gtdVzb8rwxbDSo6mqKB4EXYPzNsEguVCBx6D3PHhYtMcuOKdVtKNsEyrWDByULc4FlZf30KwF3RYiHeQwWgyp6AzncIJudAJaqTy3hWSxkUppxspdOH5RnVBpAFzCLa3RQU_UeEwn8tAcHA5E"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow p-margin-mobile md:p-gutter max-w-container-max mx-auto w-full">
+<!-- Header Actions & Title -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-slate-heading mb-1">Sample #8492-B</h2>
+<p class="font-body-md text-body-md text-secondary">Captured on Oct 24, 2023 • 14:32 PST</p>
+</div>
+<div class="flex gap-3">
+<button class="bg-pure-white border border-outline-variant text-slate-heading font-label-lg text-label-lg px-4 py-2 rounded-lg hover:bg-surface-container-lowest transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-base">share</span>
+                        Share
+                    </button>
+<button class="bg-primary-container text-on-primary-container font-label-lg text-label-lg px-5 py-2 rounded-lg hover:opacity-90 transition-opacity shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-base">picture_as_pdf</span>
+                        Export PDF Report
+                    </button>
+</div>
+</div>
+<!-- Main Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Selection & Image -->
+<div class="col-span-1 lg:col-span-4 flex flex-col gap-gutter">
+<!-- Sequence Selector -->
+<div class="data-card p-4">
+<h3 class="font-label-lg text-label-lg text-slate-heading mb-4 uppercase tracking-wider">Sequential Captures</h3>
+<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+<button class="flex-shrink-0 w-16 h-16 rounded-lg border-2 border-primary overflow-hidden relative shadow-[0_0_0_2px_rgba(124,58,237,0.2)]">
+<img class="w-full h-full object-cover" data-alt="A close-up, high-resolution macro shot of a chemical reagent strip reacting with a fluid sample. The background is pure clinical white. The strip shows a distinct purple-blue hue. High-key lighting, scientific precision aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTpTWmI7QqA1nWtNBbclohpMNS_aux2ifHrttsTf8v1S7kT6qE0Vka7VSJUA-0sf2fHVMCiTITu7tw-GahzzdD7USfD1kfJ_q-Ztp0u2n52YWDM-yvz_oxKMQQJNpyLN3mvXFk0bUulNiPW1znLdr7zzpaB8Ad-9w7PsaLwmq1eqsB8XiUS-1eznMm2B8I3zgH-BeAsGgC8__WwcFpwHX4i1SPUSFHZmSus6AWwsCTw-5kUl2OnmhV"/>
+<div class="absolute bottom-0 left-0 w-full bg-primary/90 text-pure-white text-[10px] font-bold text-center py-[2px]">C1</div>
+</button>
+<button class="flex-shrink-0 w-16 h-16 rounded-lg border border-outline-variant overflow-hidden relative opacity-70 hover:opacity-100 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="A close-up, high-resolution macro shot of a chemical reagent strip. The strip shows a slightly lighter purple hue compared to the first. Sterile white background, lab setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMLoKzR85MOwu3lgSSbF42I4A_cHY9ERiP1da8NlQjYKeJQW8UbTJfj5FNR5_lhwtCvQMs9HIdhKfVvNB9h-k_iCs9G1NosdzFq_q1gtwMRqJ-nIi7Iqpa7sedfO0X8Ie7li-iyAROtOXaP9v2TQoZuE6kyqTKOBKSWgOX9XKLdiX-4rhA5szGC3IG2x4V2iTFfohghMAnG-HS6fUy1W-aHiXVvhxFrbsnKlloZohzY4bO2bJxfUBv"/>
+<div class="absolute bottom-0 left-0 w-full bg-surface-container-high/90 text-slate-heading text-[10px] font-bold text-center py-[2px]">C2</div>
+</button>
+<button class="flex-shrink-0 w-16 h-16 rounded-lg border border-outline-variant overflow-hidden relative opacity-70 hover:opacity-100 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="A close-up, high-resolution macro shot of a chemical reagent strip. The strip shows a pinkish hue. Sterile white background, lab setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5oq6wCerRqDvxdpZlv6_atskZ7RuGRi9THhJzU3CmcPfbLX2G2Z8wFhcDLs35GN5pZjWz1m6B5drsTZ3SwehPCrj39WDnql_f_XYqrwqKoduBnkvB6hQoRrde98tTEdtDNvWz6iOAuq9xCv_MlOiV9UB3qQwj4UoprYNrvoM5lqGzgt8XT2s_g6XxACuSbFuZmos8YOwWUdTc_6a3KcKMKKWXxSwtI82obmTlCXu8p5aq-e3-O4W0"/>
+<div class="absolute bottom-0 left-0 w-full bg-surface-container-high/90 text-slate-heading text-[10px] font-bold text-center py-[2px]">C3</div>
+</button>
+<button class="flex-shrink-0 w-16 h-16 rounded-lg border border-outline-variant overflow-hidden relative opacity-70 hover:opacity-100 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="A close-up, high-resolution macro shot of a chemical reagent strip. The strip shows a pale pink hue. Sterile white background, lab setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNfvFeE_7pZgSYkkJfAWlpkP54OrPoddNlmjpJhIFpRHBkPEMRsyUbNom-tRx59PlKTLWyI77FurLaGOKtu-fcfFMvpEzu4TL6JYTOpGGPRiiYRhx1iBP-BPcl3VV4uhMW0W-LMhviOjZj_xHjvEn3UvHILASsp8C4CWhh2kr9-aGobKj4jzl-JOftolesgg9lTac0hk2M9gNDai-Tw6fxIztMiqs-hcpP-pTstHEg2rtw3NRuTuVn"/>
+<div class="absolute bottom-0 left-0 w-full bg-surface-container-high/90 text-slate-heading text-[10px] font-bold text-center py-[2px]">C4</div>
+</button>
+<button class="flex-shrink-0 w-16 h-16 rounded-lg border border-outline-variant overflow-hidden relative opacity-70 hover:opacity-100 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="A close-up, high-resolution macro shot of a chemical reagent strip. The strip is almost white. Sterile white background, lab setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBA1goovRg5fNctOwdfJmlhtjJqvIf0fagkYYkWG9WAGo-KcwzBh7bqryowY6yN59d8E0MMbiK46TWNf6F9xp_SNQCf53KIHoMtUQ_fbofTD5o86ZhH5sCO0tIUUMU0y4MrYzCuRhw86EEVFhdVU0B8XEnKO_GcOlKp9DK_AgvQaiFPXiFNm1YZPgzC3uKe_VHmIHv1tu0OpCejr-7aYSbOBmKDT7iRjjJFm3RBJAt0Jt5Vr0VLPM9"/>
+<div class="absolute bottom-0 left-0 w-full bg-surface-container-high/90 text-slate-heading text-[10px] font-bold text-center py-[2px]">C5</div>
+</button>
+</div>
+</div>
+<!-- Current Capture Display -->
+<div class="data-card p-4 flex flex-col flex-grow">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-label-lg text-label-lg text-slate-heading">Capture 1 Analysis Area</h3>
+<span class="bg-surface-container-low text-primary px-2 py-1 rounded text-[10px] font-bold tracking-widest uppercase">Target Valid</span>
+</div>
+<div class="w-full aspect-square bg-surface-container-low rounded-lg overflow-hidden relative border border-outline-variant flex items-center justify-center">
+<!-- Simulated Reticle overlay -->
+<div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+<div class="w-16 h-16 border-2 border-primary/50 rounded-full flex items-center justify-center">
+<div class="w-1 h-1 bg-primary rounded-full"></div>
+</div>
+</div>
+<img class="w-full h-full object-cover" data-alt="A top-down view of a petri dish or sample container containing a vibrant purple-blue liquid. The lighting is completely even and diffuse, creating no harsh shadows or specular highlights, perfect for colorimetric analysis. Clinical white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAAmqxZTAklK-Ck1R40dekw2Unt1c0iFjSeWbR1hufU4YKQEwuGl3ZUubdYfM9AI0mX7oETB0OQlcZI_1el8SqoBYuC4NSzyexNFwrjVQArWYteVww65XZ4xAHR2u_409bOkVXeOt8jbADwk2zZe6sawIYlvDSjC3d3prFILGJ4NFNOQWlYg3nZB9CFqonEMTYnJudvJplWSWqApF3K1IB-ALCmw0bA4a4v1M8w4rYMnuKe2LOUiyN"/>
+</div>
+</div>
+</div>
+<!-- Right Column: Data Visualization -->
+<div class="col-span-1 lg:col-span-8 flex flex-col gap-gutter">
+<!-- RGB Values Bento Block -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<!-- Red Card -->
+<div class="data-card p-6 flex flex-col justify-between border-t-4 border-t-chart-red relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-chart-red/5 rounded-full blur-xl pointer-events-none"></div>
+<h3 class="font-label-lg text-label-lg text-secondary uppercase tracking-widest mb-2">Red Channel</h3>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg text-slate-heading">201</span>
+<span class="font-label-sm text-label-sm text-chart-red bg-chart-red/10 px-2 py-0.5 rounded-full">+12</span>
+</div>
+</div>
+<!-- Green Card -->
+<div class="data-card p-6 flex flex-col justify-between border-t-4 border-t-chart-green relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-chart-green/5 rounded-full blur-xl pointer-events-none"></div>
+<h3 class="font-label-lg text-label-lg text-secondary uppercase tracking-widest mb-2">Green Channel</h3>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg text-slate-heading">179</span>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container-high px-2 py-0.5 rounded-full">-3</span>
+</div>
+</div>
+<!-- Blue Card -->
+<div class="data-card p-6 flex flex-col justify-between border-t-4 border-t-chart-blue relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-chart-blue/5 rounded-full blur-xl pointer-events-none"></div>
+<h3 class="font-label-lg text-label-lg text-secondary uppercase tracking-widest mb-2">Blue Channel</h3>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg text-slate-heading">214</span>
+<span class="font-label-sm text-label-sm text-chart-blue bg-chart-blue/10 px-2 py-0.5 rounded-full">+45</span>
+</div>
+</div>
+</div>
+<!-- Large Histogram -->
+<div class="data-card p-6 flex-grow flex flex-col min-h-[400px]">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-headline-md text-headline-md text-slate-heading">Color Distribution</h3>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-chart-red"></div>
+<span class="font-label-sm text-label-sm text-secondary">R</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-chart-green"></div>
+<span class="font-label-sm text-label-sm text-secondary">G</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-chart-blue"></div>
+<span class="font-label-sm text-label-sm text-secondary">B</span>
+</div>
+</div>
+</div>
+<!-- Conceptual Histogram Visual -->
+<div class="relative flex-grow w-full border-b border-l border-outline-variant pb-2 pl-2">
+<!-- Y-axis labels -->
+<div class="absolute -left-8 top-0 bottom-0 flex flex-col justify-between text-[10px] text-secondary font-medium py-2">
+<span>100%</span>
+<span>75%</span>
+<span>50%</span>
+<span>25%</span>
+<span>0%</span>
+</div>
+<!-- X-axis labels -->
+<div class="absolute -bottom-6 left-0 right-0 flex justify-between text-[10px] text-secondary font-medium px-4">
+<span>0</span>
+<span>64</span>
+<span>128</span>
+<span>192</span>
+<span>255</span>
+</div>
+<!-- Bars Container (Simulated Histogram overlay) -->
+<div class="absolute inset-0 pl-2 pb-2 flex items-end opacity-80 mix-blend-multiply">
+<!-- Red Curve/Bars Simulation -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path class="opacity-60" d="M0,100 L10,95 L20,80 L30,40 L40,20 L50,45 L60,85 L70,95 L80,98 L90,100 L100,100 Z" fill="none" stroke="#EF4444" stroke-width="1.5"></path>
+<path class="opacity-20" d="M0,100 L10,95 L20,80 L30,40 L40,20 L50,45 L60,85 L70,95 L80,98 L90,100 L100,100 Z" fill="#EF4444"></path>
+</svg>
+<!-- Green Curve/Bars Simulation -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path class="opacity-60" d="M0,100 L20,98 L30,90 L40,60 L50,30 L60,65 L70,85 L80,95 L90,99 L100,100 Z" fill="none" stroke="#22C55E" stroke-width="1.5"></path>
+<path class="opacity-20" d="M0,100 L20,98 L30,90 L40,60 L50,30 L60,65 L70,85 L80,95 L90,99 L100,100 Z" fill="#22C55E"></path>
+</svg>
+<!-- Blue Curve/Bars Simulation -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path class="opacity-60" d="M0,100 L30,98 L40,90 L50,70 L60,25 L70,40 L80,75 L90,95 L100,100 Z" fill="none" stroke="#3B82F6" stroke-width="1.5"></path>
+<path class="opacity-20" d="M0,100 L30,98 L40,90 L50,70 L60,25 L70,40 L80,75 L90,95 L100,100 Z" fill="#3B82F6"></path>
+</svg>
+<!-- Dominant Value Markers -->
+<div class="absolute w-px h-full bg-chart-red/40" style="left: 78.8%; border-right: 1px dashed #EF4444;"></div> <!-- 201/255 -->
+<div class="absolute w-px h-full bg-chart-green/40" style="left: 70.1%; border-right: 1px dashed #22C55E;"></div> <!-- 179/255 -->
+<div class="absolute w-px h-full bg-chart-blue/40" style="left: 83.9%; border-right: 1px dashed #3B82F6;"></div> <!-- 214/255 -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

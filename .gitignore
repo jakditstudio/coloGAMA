@@ -30,12 +30,19 @@ __pycache__/
 venv/
 env/
 
-# Python virtualenv inside backend
+# Python virtualenv and cache inside backend
 backend/coloGAMA/bin/
 backend/coloGAMA/lib/
 backend/coloGAMA/include/
 backend/coloGAMA/share/
 backend/coloGAMA/pyvenv.cfg
+backend/coloGAMA
+backend/.venv
+backend/tests/pdf_sample
+backend/_pycache__/
 
 # ===== Runtime outputs =====
 backend/history/
+
+# utilities
+backend/utils

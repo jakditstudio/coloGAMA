@@ -1,13 +1,15 @@
 import traceback
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi import FastAPI, HTTPException, APIRouter
+from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 import subprocess
 import os
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from colometry import process_colometry
+from live_feed import liveFeedParams, StreamingOutput
 
 app = FastAPI()
+live_feed = liveFeedParams()  # Initialize live feed parameters and camera
 
 # Allow frontend requests
 app.add_middleware(
@@ -19,6 +21,7 @@ app.add_middleware(
     expose_headers=["*"]
 )
 
+router = APIRouter(prefix="/api")
 
 # Define paths
 MAIN_OUTPUT_DIR = "history"
@@ -30,20 +33,42 @@ PDF_DIR = os.path.join(MAIN_OUTPUT_DIR, "pdf")
 for directory in [MAIN_OUTPUT_DIR, IMAGE_DIR, HISTOGRAM_DIR, PDF_DIR]:
     os.makedirs(directory, exist_ok=True)
 
-@app.get("/")
+
+@router.get("/stream")
+def video_stream():
+    ''' Endpoint for video streaming '''
+    streaming_output = StreamingOutput()  # Initialize streaming output
+    picam2, stop_event, stop_confirmed = live_feed.start_feed(streaming_output)  # Start the live feed
+    return StreamingResponse(
+            live_feed.generate_frames(picam2, streaming_output, stop_event, stop_confirmed),
+            media_type="multipart/x-mixed-replace; boundary=FRAME"
+        )
+
+@router.post("/stream/stop")
+def stop_stream():
+    ''' Signals the currently running live feed session to stop '''
+    stop_event = live_feed.current_stop_event
+    stop_confirmed = live_feed.current_stop_confirmed
+    if stop_event:
+        stop_event.set()
+        stop_confirmed.wait(timeout=10.0)  # Wait for the current feed to confirm it has stopped
+    return {"message": "Stop signal sent."}
+
+@router.get("/")
 def read_root():
     return {"message": "Colometry API is running!"}
 
-@app.post("/capture")
+@router.post("/capture")
 def run_colometry():
     """Triggers the colometry process and retrieves the latest results."""
+    stop_stream()  # Signal the live feed to stop
     try:
         # Run the colometry process directly
         result = process_colometry()
 
         return {
             "message": "Colometry process completed successfully.",
-            "pdf_url": f"http://localhost:8000/files/pdf/{os.path.basename(result['pdf_filepath'])}",
+            "pdf_url": f"/api/files/pdf/{os.path.basename(result['pdf_filepath'])}",
             "captures": result['captures']
         }
         
@@ -67,7 +92,7 @@ def get_latest_file(directory: str, extension: str) -> Optional[str]:
     except Exception as e:
         return None
 
-@app.get("/latest_pdf")
+@router.get("/latest_pdf")
 def get_latest_pdf():
     """Returns the latest generated PDF file."""
     latest_pdf = get_latest_file(PDF_DIR, ".pdf")
@@ -75,7 +100,7 @@ def get_latest_pdf():
         raise HTTPException(status_code=404, detail="No PDF files found.")
     return FileResponse(latest_pdf, media_type="application/pdf", filename=os.path.basename(latest_pdf))
 
-@app.get("/latest_image")
+@router.get("/latest_image")
 def get_latest_image():
     """Returns the latest captured image."""
     latest_image = get_latest_file(IMAGE_DIR, ".jpg")
@@ -83,7 +108,7 @@ def get_latest_image():
         raise HTTPException(status_code=404, detail="No image files found.")
     return FileResponse(latest_image, media_type="image/jpeg", filename=os.path.basename(latest_image))
 
-@app.get("/latest_histogram")
+@router.get("/latest_histogram")
 def get_latest_histogram():
     """Returns the latest histogram image."""
     latest_histogram = get_latest_file(HISTOGRAM_DIR, ".png")
@@ -91,7 +116,7 @@ def get_latest_histogram():
         raise HTTPException(status_code=404, detail="No histogram files found.")
     return FileResponse(latest_histogram, media_type="image/png", filename=os.path.basename(latest_histogram))
 
-@app.get("/history")
+@router.get("/history")
 def get_history():
     """Returns a list of all history files (PDFs, images, and histograms)."""
     try:
@@ -100,21 +125,21 @@ def get_history():
         histograms = sorted([f for f in os.listdir(HISTOGRAM_DIR) if f.endswith(".png")], reverse=True)
 
         return {
-            "pdfs": [{"name": f, "url": f"http://localhost:8000/history/pdf/{f}"} for f in pdfs],
-            "images": [{"name": f, "url": f"http://localhost:8000/history/image/{f}"} for f in images],
-            "histograms": [{"name": f, "url": f"http://localhost:8000/history/histogram/{f}"} for f in histograms],
+            "pdfs": [{"name": f, "url": f"/api/history/pdf/{f}"} for f in pdfs],
+            "images": [{"name": f, "url": f"/api/history/image/{f}"} for f in images],
+            "histograms": [{"name": f, "url": f"/api/history/histogram/{f}"} for f in histograms],
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
 
 # add serving file    
-@app.get("/files/{file_path:path}")
+@router.get("/files/{file_path:path}")
 def serve_file(file_path: str):
     file_location = os.path.join(MAIN_OUTPUT_DIR, file_path)
     return FileResponse(file_location)
 
-@app.get("/history/pdf/{filename}")
+@router.get("/history/pdf/{filename}")
 def get_pdf_history(filename: str):
     """Returns a specific PDF file from history."""
     file_path = os.path.join(PDF_DIR, filename)
@@ -122,7 +147,7 @@ def get_pdf_history(filename: str):
         raise HTTPException(status_code=404, detail="PDF file not found.")
     return FileResponse(file_path, media_type="application/pdf", filename=filename)
 
-@app.get("/history/image/{filename}")
+@router.get("/history/image/{filename}")
 def get_image_history(filename: str):
     """Returns a specific image file from history."""
     file_path = os.path.join(IMAGE_DIR, filename)
@@ -130,13 +155,15 @@ def get_image_history(filename: str):
         raise HTTPException(status_code=404, detail="Image file not found.")
     return FileResponse(file_path, media_type="image/jpeg", filename=filename)
 
-@app.get("/history/histogram/{filename}")
+@router.get("/history/histogram/{filename}")
 def get_histogram_history(filename: str):
     """Returns a specific histogram file from history."""
     file_path = os.path.join(HISTOGRAM_DIR, filename)
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="Histogram file not found.")
     return FileResponse(file_path, media_type="image/png", filename=filename)
+
+app.include_router(router)
 
 if __name__ == "__main__":
     import uvicorn

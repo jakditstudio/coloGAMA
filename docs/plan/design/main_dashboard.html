@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>coloGAMA Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed-dim": "#d2bbff",
+                        "surface-container": "#f3ebfa",
+                        "on-surface-variant": "#4a4455",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "chart-blue": "#3B82F6",
+                        "on-primary-container": "#ede0ff",
+                        "on-background": "#1d1a24",
+                        "on-tertiary-fixed": "#301400",
+                        "inverse-primary": "#d2bbff",
+                        "surface": "#fef7ff",
+                        "on-secondary-container": "#606368",
+                        "on-secondary-fixed-variant": "#44474c",
+                        "slate-heading": "#1E293B",
+                        "primary-container": "#7c3aed",
+                        "chart-green": "#22C55E",
+                        "slate-body": "#64748B",
+                        "on-error-container": "#93000a",
+                        "outline": "#7b7487",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "tertiary-fixed": "#ffdcc6",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "background": "#fef7ff",
+                        "surface-container-low": "#f9f1ff",
+                        "success-emerald": "#10B981",
+                        "warning-amber": "#F59E0B",
+                        "secondary-fixed-dim": "#c5c6cc",
+                        "outline-variant": "#ccc3d8",
+                        "tertiary-container": "#a15100",
+                        "primary-fixed": "#eaddff",
+                        "inverse-surface": "#332f39",
+                        "surface-dim": "#dfd7e6",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#e1e2e8",
+                        "inverse-on-surface": "#f6eefc",
+                        "primary": "#630ed4",
+                        "on-surface": "#1d1a24",
+                        "chart-red": "#EF4444",
+                        "secondary-container": "#dedfe5",
+                        "tertiary": "#7d3d00",
+                        "secondary": "#5c5e63",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "on-primary-fixed": "#25005a",
+                        "on-tertiary-container": "#ffe0cd",
+                        "surface-container-highest": "#e8dfee",
+                        "surface-variant": "#e8dfee",
+                        "pure-white": "#FFFFFF",
+                        "on-secondary-fixed": "#191c20",
+                        "surface-tint": "#732ee4",
+                        "surface-bright": "#fef7ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#ede5f4"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin-desktop": "40px"
+                    },
+                    fontFamily: {
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(124, 58, 237, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+        }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body-md h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden lg:flex flex-col h-screen p-6 gap-8 border-r border-outline-variant bg-surface-container-lowest fixed left-0 w-64 z-10">
+<div class="flex flex-col gap-2">
+<h1 class="text-headline-md font-headline-md text-primary">coloGAMA</h1>
+<p class="text-label-sm font-label-sm text-secondary">Lab Precision System</p>
+</div>
+<button class="bg-primary-container text-on-primary-container rounded-lg py-3 px-4 font-label-lg text-label-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity w-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+            Start New Analysis
+        </button>
+<div class="flex flex-col gap-2 flex-grow">
+<!-- Active: Capture -->
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 font-semibold text-body-md font-body-md" href="#">
+<span class="material-symbols-outlined">photo_camera</span>
+                Capture
+            </a>
+<!-- Inactive -->
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg text-body-md font-body-md hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                Results
+            </a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg text-body-md font-body-md hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+                History
+            </a>
+</div>
+<div class="flex flex-col gap-2 mt-auto">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg text-body-md font-body-md hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high rounded-lg text-body-md font-body-md hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-64 flex flex-col h-screen overflow-hidden bg-[#F8F9FF]">
+<!-- TopAppBar (Mobile Only) -->
+<header class="lg:hidden flex justify-between items-center px-margin-mobile h-16 w-full bg-pure-white border-b border-outline-variant shrink-0">
+<h1 class="text-headline-md font-headline-md text-primary">coloGAMA</h1>
+<div class="flex gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">videocam</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">settings</span></button>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 p-margin-mobile md:p-margin-desktop overflow-y-auto flex flex-col items-center justify-center gap-gutter">
+<div class="w-full max-w-4xl flex flex-col md:flex-row gap-gutter">
+<!-- Camera Preview Container -->
+<div class="flex-1 bg-pure-white rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.12)] p-4 border border-outline-variant flex flex-col relative aspect-[4/3] md:aspect-auto md:min-h-[500px]">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-headline-md font-headline-md text-slate-heading">Live Feed</h2>
+<span class="bg-surface-container text-primary text-label-sm font-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-success-emerald inline-block"></span> Live
+                        </span>
+</div>
+<!-- Placeholder for Camera Feed -->
+<div class="flex-1 bg-surface-dim rounded-lg overflow-hidden relative flex items-center justify-center border border-outline border-dashed">
+<img class="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-multiply" data-alt="A highly detailed view of a sterile, brightly lit laboratory workstation. In the center is a modern, high-tech colorimetric analysis device with glowing violet accents on a pristine white surface. A clear chemical sample vial is positioned under a specialized macro camera lens. The environment is clean, clinical, and professional with soft, diffused white lighting eliminating harsh shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZFubxmwVoBkTTOTB8ydWsc2Klg_ILZZWlU-IoCx5_6rRphygYhLyT86VmkBq4M-mJMu__W4vvzShVv72Y2ts7LNsqljObtclX9-mxyfLUm3_4ugWjUutCKE7YIqX058QXcajiZ9jA90ah2M4yapXV2QoG26J0znzYRhjhNM9AThuEbCTL7exYAuxznBBZ8bQ2dcOauTV6T6slk2UDdi9bIQq9OGj5nQbM8jwN6Dvbi1cRP_klJ2kB"/>
+<div class="z-10 text-center">
+<span class="material-symbols-outlined text-[48px] text-outline mb-2">linked_camera</span>
+<p class="text-body-md font-body-md text-on-surface-variant">Camera Feed Offline</p>
+<p class="text-label-sm font-label-sm text-secondary mt-1">Connect device to begin</p>
+</div>
+</div>
+</div>
+<!-- Controls & Status Panel -->
+<div class="w-full md:w-80 flex flex-col gap-6">
+<!-- Primary Action -->
+<div class="bg-pure-white rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.12)] p-6 border border-outline-variant flex flex-col items-center justify-center text-center">
+<button class="pulse-ring w-32 h-32 rounded-full bg-primary-container text-on-primary-container flex flex-col items-center justify-center shadow-lg hover:shadow-xl transition-all active:scale-95 mb-4 group">
+<span class="material-symbols-outlined text-[40px] mb-1 group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;">camera</span>
+</button>
+<h3 class="text-headline-md font-headline-md text-slate-heading mb-1">START CAPTURE</h3>
+<p class="text-label-sm font-label-sm text-secondary">Initiate colorimetric analysis</p>
+</div>
+<!-- System Status Bento -->
+<div class="bg-pure-white rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.12)] p-6 border border-outline-variant flex-1">
+<h3 class="text-label-lg font-label-lg text-slate-heading mb-4 uppercase tracking-wider">System Status</h3>
+<div class="flex flex-col gap-4">
+<!-- Hardware -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">developer_board</span>
+<span class="text-body-md font-body-md text-on-surface">Hardware</span>
+</div>
+<span class="bg-[#dcfce7] text-[#166534] text-label-sm font-label-sm px-2 py-1 rounded-full">Ready</span>
+</div>
+<!-- Lighting -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-warning-amber" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<span class="text-body-md font-body-md text-on-surface">Lighting</span>
+</div>
+<span class="bg-[#dcfce7] text-[#166534] text-label-sm font-label-sm px-2 py-1 rounded-full">Optimized</span>
+</div>
+<!-- Connection -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-chart-blue">wifi</span>
+<span class="text-body-md font-body-md text-on-surface">Connection</span>
+</div>
+<span class="bg-[#dcfce7] text-[#166534] text-label-sm font-label-sm px-2 py-1 rounded-full">Active</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="lg:hidden fixed bottom-0 w-full bg-pure-white border-t border-outline-variant flex justify-around items-center h-16 px-4 z-50">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+<span class="text-[10px] font-label-sm">Capture</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-secondary hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-label-sm">Results</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-secondary hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-[10px] font-label-sm">History</span>
+</a>
+</nav>
+</body></html>

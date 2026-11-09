@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>coloGAMA - Laboratory Precision System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fef7ff",
+                        "surface-container": "#f3ebfa",
+                        "on-surface-variant": "#4a4455",
+                        "chart-blue": "#3B82F6",
+                        "surface-container-low": "#f9f1ff",
+                        "on-secondary-fixed-variant": "#44474c",
+                        "error-container": "#ffdad6",
+                        "primary": "#630ed4",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "surface-variant": "#e8dfee",
+                        "on-tertiary-container": "#ffe0cd",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "on-secondary-container": "#606368",
+                        "surface-tint": "#732ee4",
+                        "outline": "#7b7487",
+                        "background": "#fef7ff",
+                        "primary-container": "#7c3aed",
+                        "tertiary-fixed": "#ffdcc6",
+                        "inverse-primary": "#d2bbff",
+                        "tertiary": "#7d3d00",
+                        "surface-bright": "#fef7ff",
+                        "slate-body": "#64748B",
+                        "outline-variant": "#ccc3d8",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#c5c6cc",
+                        "slate-heading": "#1E293B",
+                        "tertiary-container": "#a15100",
+                        "on-primary": "#ffffff",
+                        "chart-red": "#EF4444",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#332f39",
+                        "surface-dim": "#dfd7e6",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#1d1a24",
+                        "on-primary-fixed": "#25005a",
+                        "secondary": "#5c5e63",
+                        "secondary-fixed": "#e1e2e8",
+                        "primary-fixed-dim": "#d2bbff",
+                        "on-background": "#1d1a24",
+                        "secondary-container": "#dedfe5",
+                        "on-secondary-fixed": "#191c20",
+                        "pure-white": "#FFFFFF",
+                        "chart-green": "#22C55E",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f6eefc",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#eaddff",
+                        "surface-container-highest": "#e8dfee",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "on-tertiary-fixed": "#301400",
+                        "surface-container-high": "#ede5f4",
+                        "warning-amber": "#F59E0B",
+                        "on-primary-container": "#ede0ff",
+                        "success-emerald": "#10B981"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "unit": "4px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.surface');
+            color: theme('colors.on-surface');
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(15, 10, 25, 0.8) 0%, rgba(15, 10, 25, 0.95) 100%);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased selection:bg-primary-container selection:text-pure-white">
+<!-- TopNavBar -->
+<nav class="fixed w-full z-50 transition-all duration-300" id="main-nav">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop h-20 flex justify-between items-center">
+<div class="flex items-center gap-8">
+<a class="font-headline-md text-headline-md text-pure-white tracking-tight flex items-center gap-2" href="#">
+<span class="text-primary-fixed-dim">colo</span>GAMA
+                </a>
+<div class="hidden md:flex items-center gap-8 ml-8">
+<a class="font-label-lg text-label-lg text-pure-white border-b-2 border-primary-fixed-dim pb-1 transition-colors duration-200" href="#">Capture</a>
+<a class="font-label-lg text-label-lg text-secondary-fixed-dim hover:text-pure-white transition-colors duration-200" href="#">Results</a>
+<a class="font-label-lg text-label-lg text-secondary-fixed-dim hover:text-pure-white transition-colors duration-200" href="#">History</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-pure-white hover:text-primary-fixed-dim transition-colors duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-outline-variant cursor-pointer">
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#0A0514]">
+<!-- Immersive Background Image -->
+<div class="absolute inset-0 z-0">
+<img alt="Abstract 3D glass prisms refacting deep purple and blue light in a dark space." class="w-full h-full object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaaXS3LKWUawdWhugZhLA0_xbs7gmQcSOgOCHlyXQDlR1JtJVoUjCdWwgJ45N7WYVgwbsTGQkXRcXeF7-_RcY0_nl-SWf2bPqaO2KO8pijpD-hvU-aG6wJWTO7YN9BLhzu0su9UYuVRjRTHavyzfnkXVspfFmAUnOt5eOPiHm5M2UTVaMfA4Z3j_GmrdSlplZSzEAxsZyODE3TW-IjXnIHEcrDER1aBa2Np5c6yxMuIcpE8H_Ub7Y_6hlFhwuSFxQfYQ"/>
+<div class="absolute inset-0 hero-gradient"></div>
+</div>
+<!-- Content -->
+<div class="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto mt-20">
+<h1 class="font-display-lg text-display-lg text-pure-white mb-6 drop-shadow-lg">
+                Explore Your Color
+            </h1>
+<p class="font-body-lg text-body-lg text-secondary-fixed-dim max-w-2xl mx-auto mb-10 leading-relaxed">
+                Advanced image processing system for precise RGB color-based chemical identification. Integrating hardware design and sophisticated software on a robust, portable architecture.
+            </p>
+<button class="bg-primary-container text-pure-white px-8 py-4 rounded-lg font-label-lg text-label-lg flex items-center gap-3 hover:bg-surface-tint hover:-translate-y-1 transition-all duration-300 shadow-[0_4px_14px_rgba(124,58,237,0.4)]">
+                START CAPTURE
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_outward</span>
+</button>
+</div>
+</header>
+<!-- Features Section (Scientific Precision Style) -->
+<section class="py-24 bg-surface relative z-20 -mt-10 rounded-t-[40px]">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-slate-heading mb-4">Laboratory-Grade Precision</h2>
+<p class="font-body-md text-body-md text-slate-body max-w-2xl mx-auto">Seamlessly transition from capture to complex analytical results with our high-contrast, data-focused dashboard.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Feature Card 1 -->
+<div class="bg-pure-white rounded-xl p-8 shadow-[0px_4px_10px_rgba(0,0,0,0.05)] border border-outline-variant hover:shadow-[0px_10px_30px_rgba(124,58,237,0.1)] transition-all duration-300 group">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center mb-6 group-hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3">High-Fidelity Capture</h3>
+<p class="font-body-md text-body-md text-secondary">
+                        Utilize optimized camera settings to capture uncompressed colorimetric data, ensuring the highest accuracy for chemical reaction analysis.
+                    </p>
+</div>
+<!-- Feature Card 2 -->
+<div class="bg-pure-white rounded-xl p-8 shadow-[0px_4px_10px_rgba(0,0,0,0.05)] border border-outline-variant hover:shadow-[0px_10px_30px_rgba(124,58,237,0.1)] transition-all duration-300 group">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center mb-6 group-hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3">RGB Extraction</h3>
+<p class="font-body-md text-body-md text-secondary">
+                        Our proprietary algorithms isolate and extract precise Red, Green, and Blue values from your samples, plotting them instantly on interactive histograms.
+                    </p>
+</div>
+<!-- Feature Card 3 -->
+<div class="bg-pure-white rounded-xl p-8 shadow-[0px_4px_10px_rgba(0,0,0,0.05)] border border-outline-variant hover:shadow-[0px_10px_30px_rgba(124,58,237,0.1)] transition-all duration-300 group">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center mb-6 group-hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">history</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3">Audit Trail</h3>
+<p class="font-body-md text-body-md text-secondary">
+                        Maintain a secure, searchable history of all analyses. Export detailed PDF reports outlining visual data, timestamps, and confidence metrics.
+                    </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-pure-white border-t border-outline-variant py-8">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-body-md text-body-md text-secondary">©Copyright 2024 - coloGAMA. All Right Reserved</p>
+<div class="flex gap-6">
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors" href="#">Terms of Services</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors" href="#">Privacy Policy</a>
+</div>
+</div>
+</footer>
+<script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('main-nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-[#0A0514]/90', 'backdrop-blur-md', 'shadow-sm', 'border-b', 'border-white/10');
+            } else {
+                nav.classList.remove('bg-[#0A0514]/90', 'backdrop-blur-md', 'shadow-sm', 'border-b', 'border-white/10');
+            }
+        });
+    </script>
+</body></html>
